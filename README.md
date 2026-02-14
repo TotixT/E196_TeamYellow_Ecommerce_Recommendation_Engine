@@ -14,9 +14,5 @@ Amarillo
 
 💻 Lenguaje de Programación
 
-JavaScript (Node.js para backend y JavaScript/TypeScript para frontend)
-
-Si quieren que suene más profesional:
-
 Backend: Node.js (JavaScript/TypeScript)
 Frontend: React (JavaScript/TypeScript)
