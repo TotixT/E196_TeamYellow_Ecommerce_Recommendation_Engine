@@ -1,0 +1,33 @@
+{
+  "name": "ecommerce-recommendation-engine",
+  "version": "1.0.0",
+  "description": "E-commerce platform with intelligent recommendation system",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "install:all": "npm install",
+    "dev:back": "npm run start:dev -w backend",
+    "dev:front": "npm run dev -w frontend",
+    "debug:back": "npm run start:debug -w backend",
+    "dev": "concurrently \"npm run dev:back\" \"npm run dev:front\"",
+    "build:back": "npm run build -w backend",
+    "build:front": "npm run build -w frontend",
+    "build": "npm run build:back && npm run build:front",
+    "lint": "npm run lint -w backend && npm run lint -w frontend",
+    "prisma:generate": "npm run prisma:generate -w backend",
+    "prisma:migrate": "npm run prisma:migrate -w backend",
+    "check:all": "npm run lint:check -w backend",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:clean": "docker compose down --rmi all --volumes --remove-orphans",
+    "docker:purge": "docker system prune -af --volumes && docker buildx prune -af",
+    "docker:db": "docker compose up -d postgres"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
