@@ -3,7 +3,7 @@
 Este es el proyecto base para el **Team Yellow**. Una plataforma de E-commerce moderna con un Sistema de Recomendación Inteligente, construida bajo estándares profesionales de arquitectura.
 
 ## 🏛️ El Alma del Proyecto: `prisma.schema`
-En este proyecto, la **Verdad Absoluta** reside en el archivo [schema.prisma](file:///c:/Users/ASUS/Desktop/Proyectos/E196_TeamYellow_Ecommerce_Recommendation_Engine/backend/prisma/schema.prisma). 
+En este proyecto, la **Verdad Absoluta** reside en el archivo [schema.prisma](/backend/prisma/schema.prisma). 
 - **Es el contrato:** Define qué tablas existen y qué datos maneja el equipo.
 - **Es universal:** No importa si usas Postgres Manual, Docker o Supabase; todos usamos el mismo "plano" para que el código sea compatible.
 - **Regla de Oro:** Nunca edites tablas a mano en DBeaver. Edita el esquema y corre `npm run prisma:migrate`.
