@@ -2,7 +2,7 @@ name: Auto Assign TotixT
 
 on:
   pull_request:
-    types: [opened]
+    types: [opened, ready_for_review]
 
 permissions:
   pull-requests: write
@@ -11,24 +11,21 @@ permissions:
 jobs:
   assign:
     runs-on: ubuntu-latest
-
     steps:
       - name: Assign TotixT
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const username = "TotixT";
-
             await github.rest.issues.addAssignees({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
-              assignees: [username]
+              issue_number: context.payload.pull_request.number,
+              assignees: ['TotixT']
             });
-
             await github.rest.pulls.requestReviewers({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.payload.pull_request.number,
-              reviewers: [username]
+              reviewers: ['TotixT']
             });
