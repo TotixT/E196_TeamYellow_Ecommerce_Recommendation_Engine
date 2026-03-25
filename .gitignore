@@ -44,3 +44,6 @@ yarn-error.log*
 
 # Prisma
 **/generated
+
+# Personal Guide (Don't track)
+GUIA_PERSONAL.md
