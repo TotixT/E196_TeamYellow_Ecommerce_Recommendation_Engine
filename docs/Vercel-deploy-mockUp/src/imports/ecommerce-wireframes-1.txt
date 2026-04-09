@@ -1,0 +1,120 @@
+Design a complete mid-fidelity wireframe for a web e-commerce platform 
+called "Ecommerce Intelligent Engine" with an intelligent recommendation 
+system. The platform has two roles: regular User and Administrator.
+
+Create wireframes for the following screens in order:
+
+--- AUTHENTICATION ---
+1. Login screen
+   - Email and password fields
+   - "Forgot password?" link
+   - "Sign up" button
+   - Error message state: "Las credenciales ingresadas son incorrectas"
+
+2. Register screen
+   - Fields: full name, email, password, confirm password
+   - Inline validation messages below each field
+   - "Already have an account? Log in" link
+
+--- USER SCREENS ---
+3. Home / Main page
+   - Top navigation bar: logo, search bar, cart icon with counter, 
+     user profile menu
+   - Hero banner section
+   - Section: "Recomendados para ti" (4-8 product cards, 
+     visible but non-invasive)
+   - Product card layout: image, name, category, price, 
+     "Add to cart" button
+
+4. Product catalog / Search results
+   - Left sidebar: filters by category (checkboxes) and 
+     price range (slider)
+   - Product grid (3 columns)
+   - Search bar at top
+   - Results counter: "X productos encontrados"
+
+5. Product detail page
+   - Image gallery (main image + thumbnails)
+   - Product name, price, stock availability badge
+   - "Add to cart" button
+   - Quantity selector (+/-)
+   - Full description
+   - Section below: "Productos similares" (horizontal scroll, 
+     max 6 cards)
+
+6. Shopping cart (slide-in panel or full page)
+   - List of products: image, name, quantity controls (+/-), 
+     unit price, subtotal
+   - Delete item button per row
+   - Order total at bottom
+   - "Proceed to checkout" button
+   - Empty state: "Tu carrito está vacío" + "Go to catalog" button
+
+7. Checkout flow (show as 4-step wizard with progress indicator):
+   Step 1 - Cart review (summary)
+   Step 2 - Shipping information form (name, address, city, phone)
+   Step 3 - Payment method (card fields: number, expiry, CVV)
+   Step 4 - Order confirmation (order number ORD-YYYYNNNNN, 
+             success message, order summary)
+
+8. Order history page
+   - Table/list: order number, date, total, status badge 
+     (Procesado/Enviado/Entregado)
+   - Click row to expand order detail
+
+9. User profile / Edit personal data
+   - Form: name, phone, address
+   - Separate section: change password 
+     (current password, new password, confirm new password)
+   - Save changes button
+
+--- ADMIN SCREENS ---
+10. Admin dashboard
+    - Sidebar navigation: Users, Products, Orders, 
+      Recommendations, Statistics
+    - KPI cards: total sales this month, active users, 
+      active products, conversion rate
+    - Bar chart: monthly sales (current year)
+    - Top 5 best-selling products (mini table)
+
+11. Admin - Product management
+    - Table: image, name, category, price, stock, 
+      status (Active/Inactive), actions (Edit/Deactivate)
+    - "New product" button top right
+    - Search and filter bar above table
+
+12. Admin - New/Edit product form
+    - Fields: name, description, category (dropdown), 
+      price, stock, image upload (drag & drop)
+    - Save and Cancel buttons
+
+13. Admin - User management
+    - Table: ID, name, email, role, status (Active/Inactive), 
+      actions (Activate/Deactivate)
+    - Search bar and status filter
+
+14. Admin - Recommendation metrics
+    - KPI cards: CTR (click-through rate), 
+      conversion from recommendations
+    - Line chart: CTR trend by month
+    - Table: top recommended products and their conversion rate
+
+--- DESIGN GUIDELINES ---
+- Style: clean, modern, mid-fidelity wireframe (use real text, 
+  not lorem ipsum)
+- Color palette: primary #2E75B6 (blue), white backgrounds, 
+  light gray (#F5F5F5) for cards and sidebars
+- Typography: Arial or Inter, consistent hierarchy 
+  (H1/H2/body/caption)
+- All text in Spanish (es-CO)
+- Responsive layout prepared for desktop (1280px) 
+  — mobile considerations noted but desktop-first
+- Use consistent component library: buttons, inputs, cards, 
+  badges, navigation bar, sidebar
+- Show at least one error state and one success state 
+  across the screens
+- Recommendation sections must be subtle: 
+  a clearly labeled section, NOT popups or banners
+
+Generate all 14 screens organized in a single Figma page 
+with clear labels for each screen name.
