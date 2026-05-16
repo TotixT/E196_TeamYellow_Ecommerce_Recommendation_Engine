@@ -1,5 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// ═══════════════════════════════════════════════════════════════
+// schema.prisma — Ecommerce Intelligent Engine (EIE)
+// PostgreSQL 18 | Prisma ORM 5
+// ═══════════════════════════════════════════════════════════════
 
 generator client {
   provider = "prisma-client-js"
@@ -10,83 +12,317 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ═══════════════════════════════════════════════════════════════
+// ENUMS
+// ═══════════════════════════════════════════════════════════════
+
+enum UserRole {
+  user
+  admin
+}
+
+enum UserStatus {
+  active
+  inactive
+}
+
+enum CategoryStatus {
+  active
+  inactive
+}
+
+enum ProductStatus {
+  active
+  inactive
+}
+
+enum CartStatus {
+  active
+  converted
+  abandoned
+}
+
+enum OrderStatus {
+  processing
+  shipped
+  delivered
+  cancelled
+}
+
+enum EventType {
+  VIEW
+  CLICK_RECOMMENDATION
+  PURCHASE
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MODULE 1: AUTH & USERS
+// ═══════════════════════════════════════════════════════════════
+
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  firstName String?
-  lastName  String?
-  role      String   @default("customer")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             Int        @id @default(autoincrement())
+  fullName       String     @db.VarChar(120) @map("full_name")
+  email          String     @unique @db.VarChar(180)
+  passwordHash   String     @db.VarChar(255) @map("password_hash")
+  phone          String?    @db.VarChar(20)
+  address        String?    @db.VarChar(300)
+  city           String?    @db.VarChar(100)
+  role           UserRole   @default(user)
+  status         UserStatus @default(active)
+  failedAttempts Int        @default(0) @map("failed_attempts")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+  deletedAt      DateTime?  @map("deleted_at")
+
+  // Inverse relations
+  tokens          SessionToken[]
+  carts           Cart[]
+  orders          Order[]
+  events          BehaviorEvent[]
+  recommendations Recommendation[]
 
   @@map("users")
 }
 
-model Product {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  price       Float
-  stock       Int      @default(0)
-  imageUrl    String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+// UUID for SessionToken: tokens are exposed as strings in headers/cookies.
+// Using UUID prevents brute-force enumeration of valid sessions.
+model SessionToken {
+  id        String   @id @default(uuid())
+  userId    Int      @map("user_id")
+  token     String   @unique @db.Text
+  expiresAt DateTime @map("expires_at")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
 
-  @@map("products")
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("session_tokens")
 }
 
+// ═══════════════════════════════════════════════════════════════
+// MODULE 2: PRODUCT CATALOG
+// ═══════════════════════════════════════════════════════════════
+
+// slug is kept: it enables SEO-friendly frontend URLs like
+// /products/electronics instead of /products?categoryId=3.
+// Standard practice in e-commerce frontends.
 model Category {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  slug      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int            @id @default(autoincrement())
+  name        String         @unique @db.VarChar(100)
+  slug        String         @unique @db.VarChar(120)
+  description String?        @db.Text
+  status      CategoryStatus @default(active)
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  // Inverse relations
+  products Product[]
 
   @@map("categories")
 }
 
-model Order {
-  id        String   @id @default(uuid())
-  status    String   @default("pending")
-  total     Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Product {
+  id            Int           @id @default(autoincrement())
+  categoryId    Int           @map("category_id")
+  name          String        @db.VarChar(200)
+  description   String        @db.Text
+  price         Decimal       @db.Decimal(12, 2)
+  stock         Int           @default(0)
+  status        ProductStatus @default(active)
+  mainImage     String?       @db.VarChar(500) @map("main_image")
+  purchaseCount Int           @default(0) @map("purchase_count")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+  deletedAt     DateTime?     @map("deleted_at")
 
-  @@map("orders")
+  // Relations
+  category Category @relation(fields: [categoryId], references: [id])
+
+  // Inverse relations
+  images                  ProductImage[]
+  cartItems               CartItem[]
+  orderItems              OrderItem[]
+  events                  BehaviorEvent[]
+  originRecommendations   Recommendation[] @relation("OriginProduct")
+  receivedRecommendations Recommendation[] @relation("RecommendedProduct")
+
+  @@index([categoryId])
+  @@map("products")
 }
 
-model OrderItem {
-  id        String   @id @default(uuid())
-  quantity  Int
-  price     Float
-  createdAt DateTime @default(now())
+model ProductImage {
+  id        Int     @id @default(autoincrement())
+  productId Int     @map("product_id")
+  imageUrl  String  @db.VarChar(500) @map("image_url")
+  order     Int     @default(1) @db.SmallInt
+  isPrimary Boolean @default(false) @map("is_primary")
 
-  @@map("order_items")
+  // Relations
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("product_images")
 }
+
+// ═══════════════════════════════════════════════════════════════
+// MODULE 3: CART & ORDERS
+// ═══════════════════════════════════════════════════════════════
 
 model Cart {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        Int        @id @default(autoincrement())
+  userId    Int?       @map("user_id")
+  sessionId String?    @db.VarChar(128) @map("session_id") // Anonymous cart support
+  status    CartStatus @default(active)
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id])
+
+  // Inverse relations
+  items CartItem[]
 
   @@map("carts")
 }
 
 model CartItem {
-  id        String   @id @default(uuid())
+  id        Int      @id @default(autoincrement())
+  cartId    Int      @map("cart_id")
+  productId Int      @map("product_id")
   quantity  Int
-  createdAt DateTime @default(now())
+  unitPrice Decimal  @db.Decimal(12, 2) @map("unit_price")
+  addedAt   DateTime @default(now()) @map("added_at")
+
+  // Relations
+  cart    Cart    @relation(fields: [cartId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
 
   @@map("cart_items")
 }
 
-model RecommendationLog {
-  id             String   @id @default(uuid())
-  strategyUsed   String
-  productsServed Int      @default(0)
-  createdAt      DateTime @default(now())
+// UUID for Order: the order ID may appear in URLs and emails.
+// UUID prevents customers from guessing other orders by incrementing an integer.
+// orderNumber (ORD-YYYYNNNNN) is the human-readable reference shown to users.
+model Order {
+  id              String      @id @default(uuid())
+  userId          Int         @map("user_id")
+  orderNumber     String      @unique @db.VarChar(20) @map("order_number")
+  status          OrderStatus @default(processing)
+  subtotal        Decimal     @db.Decimal(14, 2)
+  shippingCost    Decimal     @default(0) @db.Decimal(10, 2) @map("shipping_cost")
+  total           Decimal     @db.Decimal(14, 2)
+  shippingName    String      @db.VarChar(150) @map("shipping_name")
+  shippingAddress String      @db.VarChar(300) @map("shipping_address")
+  shippingCity    String      @db.VarChar(100) @map("shipping_city")
+  shippingPhone   String      @db.VarChar(20) @map("shipping_phone")
+  createdAt       DateTime    @default(now()) @map("created_at")
 
-  @@map("recommendation_logs")
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+
+  // Inverse relations
+  items OrderItem[]
+
+  @@map("orders")
 }
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   String  @map("order_id")
+  productId Int     @map("product_id")
+  quantity  Int
+  unitPrice Decimal @db.Decimal(12, 2) @map("unit_price")
+  lineTotal Decimal @db.Decimal(12, 2) @map("line_total")
+
+  // Relations
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MODULE 4: RECOMMENDATION ENGINE
+// ═══════════════════════════════════════════════════════════════
+
+model BehaviorEvent {
+  id               Int       @id @default(autoincrement())
+  userId           Int?      @map("user_id")
+  productId        Int       @map("product_id")
+  sessionId        String?   @db.VarChar(128) @map("session_id")
+  eventType        EventType @map("event_type")
+  contextProductId Int?      @map("context_product_id")
+  quantity         Int?
+  pricePaid        Decimal?  @db.Decimal(12, 2) @map("price_paid")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  user    User?   @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([createdAt])
+  @@index([userId])
+  @@index([productId])
+  @@map("behavior_events")
+}
+
+// Two FK to Product require explicit @relation names to avoid Prisma ambiguity error.
+model Recommendation {
+  id                  Int      @id @default(autoincrement())
+  userId              Int?     @map("user_id")
+  originProductId     Int?     @map("origin_product_id")
+  recommendedProductId Int     @map("recommended_product_id")
+  algorithm           String   @default("content_based") @db.VarChar(50)
+  score               Decimal? @db.Decimal(5, 4)
+  position            Int?     @db.SmallInt
+  wasClicked          Boolean  @default(false) @map("was_clicked")
+  wasPurchased        Boolean  @default(false) @map("was_purchased")
+  generatedAt         DateTime @default(now()) @map("generated_at")
+
+  // Relations
+  user               User?    @relation(fields: [userId], references: [id])
+  originProduct      Product? @relation("OriginProduct", fields: [originProductId], references: [id])
+  recommendedProduct Product  @relation("RecommendedProduct", fields: [recommendedProductId], references: [id])
+
+  @@map("recommendations")
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MODULE 5: ADMIN & REPORTS
+// (Aggregate tables — no FK relations, populated by batch jobs)
+// ═══════════════════════════════════════════════════════════════
+
+model RecommendationMetric {
+  id               Int      @id @default(autoincrement())
+  date             DateTime @db.Date
+  totalImpressions Int      @default(0) @map("total_impressions")
+  totalClicks      Int      @default(0) @map("total_clicks")
+  totalPurchases   Int      @default(0) @map("total_purchases")
+  ctr              Decimal? @db.Decimal(5, 4)
+  conversionRate   Decimal? @db.Decimal(5, 4) @map("conversion_rate")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  @@map("recommendation_metrics")
+}
+
+model SalesReport {
+  id             Int      @id @default(autoincrement())
+  year           Int      @db.SmallInt
+  month          Int      @db.SmallInt
+  totalRevenue   Decimal  @default(0) @db.Decimal(16, 2) @map("total_revenue")
+  totalOrders    Int      @default(0) @map("total_orders")
+  totalNewUsers  Int      @default(0) @map("total_new_users")
+  conversionRate Decimal? @db.Decimal(5, 4) @map("conversion_rate")
+  generatedAt    DateTime @default(now()) @map("generated_at")
+
+  @@unique([year, month])
+  @@map("sales_reports")
+}
+
+// ═══════════════════════════════════════════════════════════════
+// .env REFERENCE
+// Local PostgreSQL (port 5432):
+// DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ecommerce_recommendation_engine_db?schema=public"
+// Docker PostgreSQL (port 5435):
+// DATABASE_URL="postgresql://postgres:postgres@localhost:5435/ecommerce_recommendation_engine_db?schema=public"
+// ═══════════════════════════════════════════════════════════════
