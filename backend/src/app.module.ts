@@ -10,6 +10,7 @@ import { RecommendationsModule } from './modules/recommendations/recommendations
 import { HealthModule } from './modules/health/health.module';
 import { PrismaModule } from './database/prisma.module';
 import { LoggerModule } from './common/logger/logger.module';
+import { CloudinaryModule } from './common/shared/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { LoggerModule } from './common/logger/logger.module';
     }),
     PrismaModule,
     LoggerModule,
+    CloudinaryModule,
     AuthModule,
     UsersModule,
     ProductsModule,

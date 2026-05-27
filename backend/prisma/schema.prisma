@@ -152,11 +152,12 @@ model Product {
 }
 
 model ProductImage {
-  id        Int     @id @default(autoincrement())
-  productId Int     @map("product_id")
-  imageUrl  String  @db.VarChar(500) @map("image_url")
-  order     Int     @default(1) @db.SmallInt
-  isPrimary Boolean @default(false) @map("is_primary")
+  id                 Int     @id @default(autoincrement())
+  productId          Int     @map("product_id")
+  imageUrl           String  @db.VarChar(500) @map("image_url")
+  cloudinaryPublicId String  @db.VarChar(500) @map("cloudinary_public_id")
+  order              Int     @default(1) @db.SmallInt
+  isPrimary          Boolean @default(false) @map("is_primary")
 
   // Relations
   product Product @relation(fields: [productId], references: [id])
