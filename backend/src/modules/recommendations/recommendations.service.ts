@@ -1,22 +1,60 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { RecommendationsRepository } from './recommendations.repository';
-import { RecommendationStrategy } from './strategies/recommendation-strategy.interface';
+import { PrismaService } from '../../database/prisma.service';
 
 @Injectable()
 export class RecommendationsService {
-  private strategy: RecommendationStrategy;
-
   constructor(
     private readonly recommendationsRepository: RecommendationsRepository,
+    private readonly prisma: PrismaService,
   ) {}
 
-  setStrategy(strategy: RecommendationStrategy): void {
-    this.strategy = strategy;
+  async getHistoryBasedRecommendations(userId: number) {
+    const categoryIds = await this.recommendationsRepository.getUserPurchasedCategoryIds(userId);
+    if (categoryIds.length === 0) return [];
+    
+    return this.recommendationsRepository.getUnpurchasedProductsByCategories(userId, categoryIds, 8);
   }
 
-  // TODO: Implement recommendation logic using Strategy pattern
-  // TODO: Analyze purchase history
-  // TODO: Track most viewed products
-  // TODO: Track most purchased products
-  // TODO: Analyze frequent categories per user
+  async getSessionBasedRecommendations(sessionId: string, userId?: number) {
+    const categoryIds = await this.recommendationsRepository.getRecentViewedCategoryIds(sessionId, userId, 10);
+    if (categoryIds.length === 0) return [];
+
+    // If userId exists, we can exclude purchased products. 
+    // For simplicity and matching requirements, we'll use the same repository method if userId is present.
+    // If anonymous, we just fetch popular products from those categories.
+    if (userId) {
+      return this.recommendationsRepository.getUnpurchasedProductsByCategories(userId, categoryIds, 8);
+    } else {
+      return this.prisma.product.findMany({
+        where: { categoryId: { in: categoryIds }, status: 'active' },
+        orderBy: { purchaseCount: 'desc' },
+        take: 8,
+      });
+    }
+  }
+
+  async getSimilarProducts(productId: number) {
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+      select: { categoryId: true },
+    });
+
+    if (!product) {
+      throw new NotFoundException('Producto no encontrado');
+    }
+
+    return this.recommendationsRepository.getSimilarProducts(product.categoryId, productId, 6);
+  }
+
+  async getHomeRecommendations(userId?: number) {
+    if (userId) {
+      const historyRecs = await this.getHistoryBasedRecommendations(userId);
+      if (historyRecs.length > 0) {
+        return historyRecs; // Custom recommendations
+      }
+    }
+    // Fallback: Popular products for anonymous or users without history
+    return this.recommendationsRepository.getPopularProducts(8);
+  }
 }

@@ -147,4 +147,89 @@ export class MailService {
       this.logger.error(`Error al enviar correo a ${to}: ${error.message}`, error.stack);
     }
   }
+
+  async sendPasswordResetEmail(
+    to: string,
+    data: { userName: string; resetLink: string; resetToken: string },
+  ): Promise<void> {
+    const from =
+      this.configService.get<string>('SMTP_FROM') || 'No Reply <noreply@ecommerce.com>';
+
+    const htmlContent = `
+      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; background-color: #ffffff;">
+        
+        <!-- Header con Logo -->
+        <div style="background-color: #1a1a1a; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
+          <img src="https://res.cloudinary.com/ds7js53vz/image/upload/v1779898616/eie/logos/EIE_Imagen.jpg" alt="EIE Logo" style="max-height: 80px; width: auto; vertical-align: middle;">
+        </div>
+        
+        <div style="padding: 30px 20px; border: 1px solid #eee; border-top: none; border-radius: 0 0 8px 8px;">
+          <h1 style="color: #1a1a1a; font-size: 24px; margin-top: 0;">Restablecer tu contraseña</h1>
+          <p style="font-size: 16px; line-height: 1.5;">Hola, <strong>${data.userName}</strong>:</p>
+          <p style="font-size: 16px; line-height: 1.5; color: #555;">
+            Recibimos una solicitud para restablecer la contraseña de tu cuenta. 
+            Si tú no realizaste esta solicitud, puedes ignorar este correo de forma segura.
+          </p>
+          
+          <!-- Información de Seguridad -->
+          <div style="background-color: #fff8e1; padding: 15px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #f8ca24;">
+            <p style="margin: 0; font-size: 14px;">
+              ⏱️ <strong>Este enlace expira en 15 minutos</strong> por razones de seguridad.
+            </p>
+          </div>
+
+          <!-- Botón de Acción -->
+          <div style="text-align: center; margin: 40px 0;">
+            <a href="${data.resetLink}" style="background-color: #f8ca24; color: #1a1a1a; padding: 14px 28px; text-decoration: none; font-weight: bold; font-size: 16px; border-radius: 4px; display: inline-block;">
+              Restablecer mi contraseña
+            </a>
+          </div>
+
+          <!-- Enlace alternativo (Fallback) -->
+          <div style="background-color: #f9f9f9; padding: 15px; border-radius: 6px; margin: 20px 0;">
+            <p style="margin: 0 0 10px 0; font-size: 14px; color: #555;">
+              Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:
+            </p>
+            <p style="margin: 0; font-size: 12px; word-break: break-all; color: #333; font-family: monospace; background-color: #eee; padding: 10px; border-radius: 4px;">
+              <a href="${data.resetLink}" style="color: #333; text-decoration: none;">${data.resetLink}</a>
+            </p>
+          </div>
+
+          <!-- Footer -->
+          <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #888; font-size: 12px; line-height: 1.5;">
+            <p style="margin: 0 0 10px 0;">
+              Si no solicitaste este cambio, contacta a nuestro equipo de soporte:<br>
+              <a href="mailto:soporte@eie.com" style="color: #f8ca24; text-decoration: none;">soporte@eie.com</a>
+            </p>
+            <p style="margin: 0;">
+              <a href="#" style="color: #888; text-decoration: underline;">Términos y Condiciones</a> | 
+              <a href="#" style="color: #888; text-decoration: underline;">Políticas de Privacidad</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    try {
+      const info = await this.transporter.sendMail({
+        from,
+        to,
+        subject: 'Restablecer tu contraseña — EIE',
+        html: htmlContent,
+      });
+
+      this.logger.log(`Email de recuperación de contraseña enviado a ${to}`);
+
+      if (this.configService.get<string>('SMTP_HOST')?.includes('ethereal')) {
+        this.logger.log(
+          `URL de previsualización (Ethereal): ${nodemailer.getTestMessageUrl(info)}`,
+        );
+      }
+    } catch (error) {
+      this.logger.error(
+        `Error al enviar correo de recuperación a ${to}: ${error.message}`,
+        error.stack,
+      );
+    }
+  }
 }

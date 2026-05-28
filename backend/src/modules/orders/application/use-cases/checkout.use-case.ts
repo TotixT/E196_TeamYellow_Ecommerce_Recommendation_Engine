@@ -7,6 +7,8 @@ import { IOrdersRepository } from '../../domain/interfaces/i-orders-repository.i
 import { ICartsRepository } from '../../../carts/domain/interfaces/i-carts-repository.interface';
 import { CheckoutDto } from '../dtos/checkout.dto';
 import { MailService } from '../../../../common/shared/mail/mail.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { OrderPurchasedEvent } from '../../../recommendations/application/listeners/behavior-events.listener';
 
 @Injectable()
 export class CheckoutUseCase {
@@ -16,6 +18,7 @@ export class CheckoutUseCase {
     @Inject('ICartsRepository')
     private readonly cartsRepository: ICartsRepository,
     private readonly mailService: MailService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async execute(userId: number, userEmail: string, dto: CheckoutDto) {
@@ -68,6 +71,19 @@ export class CheckoutUseCase {
       shippingCity: dto.shippingCity,
       estimatedDelivery: estimatedDelivery
     });
+
+    // EIE-012: Asynchronous tracking of PURCHASE event
+    this.eventEmitter.emit(
+      'order.purchased',
+      new OrderPurchasedEvent(
+        userId,
+        order.items.map(i => ({
+          productId: i.productId,
+          quantity: i.quantity,
+          unitPrice: i.unitPrice
+        }))
+      )
+    );
 
     return {
       message: 'Pedido confirmado exitosamente',

@@ -10,6 +10,10 @@ import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
 import { RegisterUseCase } from './application/use-cases/register.use-case';
 import { LoginUseCase } from './application/use-cases/login.use-case';
 import { LogoutUseCase } from './application/use-cases/logout.use-case';
+import { ForgotPasswordUseCase } from './application/use-cases/forgot-password.use-case';
+import { ResetPasswordUseCase } from './application/use-cases/reset-password.use-case';
+import { PrismaModule } from '../../database/prisma.module';
+import { MailModule } from '../../common/shared/mail/mail.module';
 
 @Module({
   imports: [
@@ -24,6 +28,8 @@ import { LogoutUseCase } from './application/use-cases/logout.use-case';
         },
       }),
     }),
+    PrismaModule,
+    MailModule,
   ],
   controllers: [AuthController],
   providers: [
@@ -31,6 +37,8 @@ import { LogoutUseCase } from './application/use-cases/logout.use-case';
     RegisterUseCase,
     LoginUseCase,
     LogoutUseCase,
+    ForgotPasswordUseCase,
+    ResetPasswordUseCase,
     // Strategy
     JwtStrategy,
     // Repository — bound to interface token for DI
@@ -41,3 +49,4 @@ import { LogoutUseCase } from './application/use-cases/logout.use-case';
   exports: [JwtModule, PassportModule],
 })
 export class AuthModule {}
+

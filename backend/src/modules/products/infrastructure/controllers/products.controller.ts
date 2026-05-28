@@ -16,9 +16,11 @@ import {
   HttpCode,
   HttpStatus,
   BadRequestException,
+  Req,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../../../../common/guards/jwt-auth.guard';
+import { JwtOptionalGuard } from '../../../../common/guards/jwt-optional.guard';
 import { RolesGuard } from '../../../../common/guards/roles.guard';
 import { Roles } from '../../../../common/decorators/roles.decorator';
 import { CreateProductUseCase } from '../../application/use-cases/create-product.use-case';
@@ -35,6 +37,9 @@ import { CreateProductDto } from '../../application/dtos/create-product.dto';
 import { UpdateProductDto } from '../../application/dtos/update-product.dto';
 import { ProductsQueryDto } from '../../application/dtos/products-query.dto';
 
+import { ProductViewedEvent } from '../../../recommendations/application/listeners/behavior-events.listener';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+
 @Controller()
 export class ProductsController {
   constructor(
@@ -48,6 +53,7 @@ export class ProductsController {
     private readonly toggleProductStatusUseCase: ToggleProductStatusUseCase,
     private readonly updateProductImageUseCase: UpdateProductImageUseCase,
     private readonly setPrimaryImageUseCase: SetPrimaryImageUseCase,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   // PUBLIC: GET /api/v1/products
@@ -58,8 +64,19 @@ export class ProductsController {
 
   // PUBLIC: GET /api/v1/products/:id
   @Get('products/:id')
-  getById(@Param('id', ParseIntPipe) id: number) {
-    return this.getProductUseCase.execute(id);
+  @UseGuards(JwtOptionalGuard)
+  async getById(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+    const product = await this.getProductUseCase.execute(id);
+    
+    // EIE-012: Asynchronous tracking of VIEW event
+    const userId = req.user?.id; // Might be undefined if public
+    const sessionId = req.headers['x-session-id'];
+    this.eventEmitter.emit(
+      'product.viewed',
+      new ProductViewedEvent(id, userId, sessionId),
+    );
+
+    return product;
   }
 
   // ADMIN: POST /api/v1/admin/products
