@@ -124,7 +124,7 @@ export default function AdminDashboardPage() {
             </div>
           ) : topProducts && topProducts.length > 0 ? (
             <div className="space-y-3">
-              {topProducts.slice(0, 5).map((product, i) => (
+              {topProducts.slice(0, 5).map((product: any, i: number) => (
                 <div key={product.id} className="flex items-center gap-3">
                   <span className="text-xs font-bold text-gray-400 w-5">{i + 1}</span>
                   <div className="w-9 h-9 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">

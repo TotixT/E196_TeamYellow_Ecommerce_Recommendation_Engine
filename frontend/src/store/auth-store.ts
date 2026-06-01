@@ -50,7 +50,7 @@ export const useAuthStore = create<AuthState>()(
           const { data } = await api.post<LoginResponse>(API_ENDPOINTS.AUTH.LOGIN, { email, password });
           const user = data.user;
           // The backend returns accessToken, not token
-          const token = data.accessToken;
+          const token = (data as any).accessToken;
 
           // Persist token for the interceptor
           localStorage.setItem('eie_token', token);

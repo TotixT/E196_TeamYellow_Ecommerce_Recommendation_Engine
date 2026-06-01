@@ -140,7 +140,7 @@ export default function AdminStatsPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#6b7280' }} />
                 <YAxis tick={{ fontSize: 12, fill: '#6b7280' }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
-                <Tooltip formatter={(value: number) => [formatCOP(value), 'Ingresos']} contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '13px' }} />
+                <Tooltip formatter={(value: any) => [formatCOP(value), 'Ingresos']} contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '13px' }} />
                 <Area type="monotone" dataKey="revenue" stroke="#2E75B6" fill="url(#colorRevenue)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
@@ -156,7 +156,7 @@ export default function AdminStatsPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#6b7280' }} />
                 <YAxis tick={{ fontSize: 12, fill: '#6b7280' }} tickFormatter={(v) => `${v}%`} />
-                <Tooltip formatter={(value: number, name: string) => [name === 'rate' ? `${value.toFixed(1)}%` : value, name === 'rate' ? 'Tasa' : name === 'sessions' ? 'Sesiones' : 'Compras']} contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '13px' }} />
+                <Tooltip formatter={(value: any, name: any) => [name === 'rate' ? `${value.toFixed(1)}%` : value, name === 'rate' ? 'Tasa' : name === 'sessions' ? 'Sesiones' : 'Compras']} contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '13px' }} />
                 <Line type="monotone" dataKey="rate" stroke="#F59E0B" strokeWidth={2} dot={{ fill: '#F59E0B', r: 4 }} />
               </LineChart>
             </ResponsiveContainer>
@@ -182,7 +182,7 @@ export default function AdminStatsPage() {
                 </tr>
               </thead>
               <tbody>
-                {topProducts && topProducts.length > 0 ? topProducts.map((p, i) => (
+                {topProducts && topProducts.length > 0 ? topProducts.map((p: any, i: number) => (
                   <tr key={p.id} className="border-b border-gray-50 hover:bg-gray-50/50">
                     <td className="py-2.5 px-4 text-gray-400 font-medium">{i + 1}</td>
                     <td className="py-2.5 px-4">
@@ -224,7 +224,7 @@ export default function AdminStatsPage() {
                 </tr>
               </thead>
               <tbody>
-                {topUsers && topUsers.length > 0 ? topUsers.map((u, i) => (
+                {topUsers && topUsers.length > 0 ? topUsers.map((u: any, i: number) => (
                   <tr key={u.id} className="border-b border-gray-50 hover:bg-gray-50/50">
                     <td className="py-2.5 px-4 text-gray-400 font-medium">{i + 1}</td>
                     <td className="py-2.5 px-4">
