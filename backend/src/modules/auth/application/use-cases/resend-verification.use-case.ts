@@ -39,12 +39,20 @@ export class ResendVerificationUseCase {
     });
 
     // Send the verification email again
-    const verificationLink = `http://localhost:3000/verify-account?token=${token}`;
-    await this.mailService.sendVerificationEmail(user.email, {
-      userName: user.fullName,
-      otpCode: code,
-      verificationLink,
-    });
+    const verificationLink = `https://e196-team-yellow-ecommerce-recommen.vercel.app/verify-account?token=${token}`;
+
+    try {
+      await this.mailService.sendVerificationEmail(user.email, {
+        userName: user.fullName,
+        otpCode: code,
+        verificationLink,
+      });
+    } catch (error) {
+      console.error(
+        'Failed to send verification email (likely missing SMTP credentials). User token created anyway.',
+        error,
+      );
+    }
 
     return {
       message: 'Código de verificación reenviado a tu correo.',

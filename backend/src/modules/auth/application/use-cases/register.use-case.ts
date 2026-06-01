@@ -49,13 +49,21 @@ export class RegisterUseCase {
       expiresAt,
     });
 
-    // Send the verification email
-    const verificationLink = `http://localhost:3000/verify-account?token=${token}`;
-    await this.mailService.sendVerificationEmail(user.email, {
-      userName: user.fullName,
-      otpCode: code,
-      verificationLink,
-    });
+    // const verificationLink = `http://localhost:3000/verify-account?token=${token}`;
+    const verificationLink = `https://e196-team-yellow-ecommerce-recommen.vercel.app/verify-account?token=${token}`;
+
+    try {
+      await this.mailService.sendVerificationEmail(user.email, {
+        userName: user.fullName,
+        otpCode: code,
+        verificationLink,
+      });
+    } catch (error) {
+      console.error(
+        'Failed to send verification email (likely missing SMTP credentials). User created anyway.',
+        error,
+      );
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash: _, ...safeUser } = user;

@@ -35,15 +35,21 @@ export class ForgotPasswordUseCase {
     );
 
     // Send the reset email — uses FRONTEND_URL for the link button
-    const frontendUrl =
-      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
-    const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`;
+    // const resetLink = `http://localhost:3000/reset-password?token=${resetToken}`;
+    const resetLink = `https://e196-team-yellow-ecommerce-recommen.vercel.app/reset-password?token=${resetToken}`;
 
-    await this.mailService.sendPasswordResetEmail(user.email, {
-      userName: user.fullName,
-      resetLink,
-      resetToken,
-    });
+    try {
+      await this.mailService.sendPasswordResetEmail(user.email, {
+        userName: user.fullName,
+        resetLink,
+        resetToken,
+      });
+    } catch (error) {
+      console.error(
+        'Failed to send reset email (missing API key or SMTP issue)',
+        error,
+      );
+    }
 
     this.logger.log(`Password reset email sent to ${user.email}`);
 
