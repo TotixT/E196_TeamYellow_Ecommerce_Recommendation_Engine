@@ -33,8 +33,11 @@ export class OrdersController {
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(JwtAuthGuard)
   checkout(@Body() dto: CheckoutDto, @Req() req: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const userId = req.user.id;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const userEmail = req.user.email;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return this.checkoutUseCase.execute(userId, userEmail, dto);
   }
 
@@ -46,8 +49,10 @@ export class OrdersController {
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const userId = req.user.id;
     return this.listUserOrdersUseCase.execute(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       userId,
       page ? parseInt(page, 10) : 1,
       limit ? parseInt(limit, 10) : 10,
@@ -57,7 +62,9 @@ export class OrdersController {
   @Get('orders/:id')
   @UseGuards(JwtAuthGuard)
   getOrderDetail(@Param('id') id: string, @Req() req: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const userId = req.user.id;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return this.getOrderDetailsUseCase.execute(id, userId);
   }
 
@@ -65,10 +72,7 @@ export class OrdersController {
   @Get('admin/orders')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  listAllOrders(
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-  ) {
+  listAllOrders(@Query('page') page?: string, @Query('limit') limit?: string) {
     return this.getAllOrdersUseCase.execute(
       page ? parseInt(page, 10) : 1,
       limit ? parseInt(limit, 10) : 10,

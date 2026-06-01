@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  Query,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -32,9 +26,7 @@ export class ReportsController {
   }
 
   @Get('top-products')
-  async getTopProducts(
-    @Query('period') period?: 'month' | '3months' | 'year',
-  ) {
+  async getTopProducts(@Query('period') period?: 'month' | '3months' | 'year') {
     return this.getTopProductsUseCase.execute(period);
   }
 

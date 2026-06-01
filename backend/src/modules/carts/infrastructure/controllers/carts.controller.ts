@@ -37,28 +37,34 @@ export class CartsController {
   /**
    * Extract userId from JWT (if logged in) or sessionId from header (if anonymous).
    */
-  private extractIdentity(req: any, sessionIdHeader?: string, requireIdentity: boolean = true) {
+  private extractIdentity(
+    req: any,
+    sessionIdHeader?: string,
+    requireIdentity: boolean = true,
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const userId: number | null = req.user?.id ?? null;
-    const sessionId: string | null = !userId
-      ? sessionIdHeader ?? null
-      : null;
-      
+    const sessionId: string | null = !userId ? (sessionIdHeader ?? null) : null;
+
     if (requireIdentity && !userId && !sessionId) {
-      throw new BadRequestException('Debes enviar un token de autorización o un header X-Session-ID');
+      throw new BadRequestException(
+        'Debes enviar un token de autorización o un header X-Session-ID',
+      );
     }
-    
+
     return { userId, sessionId };
   }
 
   // GET /api/v1/cart — View active cart (anonymous or authenticated)
   @Get('cart')
   @UseGuards(JwtOptionalGuard)
-  getCart(
-    @Req() req: any,
-    @Headers('x-session-id') sessionId?: string,
-  ) {
+  getCart(@Req() req: any, @Headers('x-session-id') sessionId?: string) {
     // Para ver el carrito no obligamos identidad (si no tiene, devolvemos carrito vacío)
-    const { userId, sessionId: sid } = this.extractIdentity(req, sessionId, false);
+    const { userId, sessionId: sid } = this.extractIdentity(
+      req,
+      sessionId,
+      false,
+    );
     return this.getCartUseCase.execute(userId, sid);
   }
 
@@ -106,14 +112,13 @@ export class CartsController {
   @Post('cart/merge')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
-  mergeCart(
-    @Req() req: any,
-    @Headers('x-session-id') sessionId?: string,
-  ) {
+  mergeCart(@Req() req: any, @Headers('x-session-id') sessionId?: string) {
     if (!sessionId) {
       return { message: 'No hay carrito anónimo que fusionar' };
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const userId = req.user.id;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return this.mergeCartUseCase.execute(sessionId, userId);
   }
 }

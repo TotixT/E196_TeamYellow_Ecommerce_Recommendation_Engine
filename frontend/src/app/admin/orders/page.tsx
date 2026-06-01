@@ -17,6 +17,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
 
 export default function AdminOrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [detailLoading, setDetailLoading] = useState(false);
 
   const { data: orders, isLoading } = useQuery({

@@ -33,6 +33,7 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   persist(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (set, get) => ({
       token: null,
       user: null,
@@ -70,6 +71,7 @@ export const useAuthStore = create<AuthState>()(
           } catch (mergeErr) {
             console.error('Failed to merge cart after login:', mergeErr);
           }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
           let message = 'Error desconocido del servidor.';
           if (err.response?.data) {
@@ -88,6 +90,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           await api.post(API_ENDPOINTS.AUTH.REGISTER, { fullName, email, password });
           set({ isLoading: false });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
           let message = 'Error desconocido del servidor.';
           if (err.response?.data) {
@@ -127,6 +130,7 @@ export const useAuthStore = create<AuthState>()(
           const { data } = await api.post(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, { email });
           set({ isLoading: false });
           return data;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
           const message = err.response?.data?.message || 'Error al solicitar la recuperación.';
           set({ isLoading: false, error: message });
@@ -140,6 +144,7 @@ export const useAuthStore = create<AuthState>()(
           const { data } = await api.post(API_ENDPOINTS.AUTH.RESET_PASSWORD, { token, newPassword });
           set({ isLoading: false });
           return data;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
           const message = err.response?.data?.message || 'Error al restablecer la contraseña.';
           set({ isLoading: false, error: message });

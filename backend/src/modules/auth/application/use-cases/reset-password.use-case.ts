@@ -1,4 +1,9 @@
-import { Injectable, BadRequestException, Inject, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  Inject,
+  Logger,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { IAuthRepository } from '../../domain/interfaces/i-auth-repository.interface';
@@ -22,6 +27,7 @@ export class ResetPasswordUseCase {
 
     try {
       payload = this.jwtService.verify(dto.token);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       throw new BadRequestException(
         'El enlace de recuperación ha expirado o no es válido. Solicita uno nuevo.',
@@ -61,7 +67,8 @@ export class ResetPasswordUseCase {
     this.logger.log(`Password successfully reset for user ${user.email}`);
 
     return {
-      message: 'Tu contraseña ha sido restablecida exitosamente. Ya puedes iniciar sesión con tu nueva contraseña.',
+      message:
+        'Tu contraseña ha sido restablecida exitosamente. Ya puedes iniciar sesión con tu nueva contraseña.',
     };
   }
 }

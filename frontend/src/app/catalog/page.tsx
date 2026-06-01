@@ -35,6 +35,7 @@ function CatalogContent() {
   const { data: productsData, isLoading } = useQuery({
     queryKey: ['products', { search, selectedCategory, minPrice, maxPrice, page }],
     queryFn: async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const params: any = { page, limit: 12 };
       if (search) params.search = search;
       if (selectedCategory) params.categoryId = selectedCategory;

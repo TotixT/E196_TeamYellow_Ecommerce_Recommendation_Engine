@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+ 
 const axios = require('axios');
+ 
 const FormData = require('form-data');
 
 const fd = new FormData();

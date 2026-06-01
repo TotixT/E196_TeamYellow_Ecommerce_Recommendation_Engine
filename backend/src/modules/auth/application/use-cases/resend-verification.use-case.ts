@@ -13,11 +13,12 @@ export class ResendVerificationUseCase {
 
   async execute(email: string): Promise<{ message: string }> {
     const user = await this.authRepository.findByEmail(email.toLowerCase());
-    
+
     if (!user) {
       throw new BadRequestException('Usuario no encontrado.');
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
     if (user.status === 'active') {
       throw new BadRequestException('Esta cuenta ya está verificada.');
     }

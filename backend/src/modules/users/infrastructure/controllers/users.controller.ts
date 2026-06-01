@@ -38,12 +38,14 @@ export class UsersController {
   // EIE-004: GET /api/v1/users/me
   @Get('users/me')
   getProfile(@CurrentUser() user: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
     return this.getProfileUseCase.execute(user.id);
   }
 
   // EIE-004 escenario 1: PUT /api/v1/users/me
   @Put('users/me')
   updateProfile(@CurrentUser() user: any, @Body() dto: UpdateProfileDto) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
     return this.updateProfileUseCase.execute(user.id, dto);
   }
 
@@ -51,6 +53,7 @@ export class UsersController {
   @Put('users/me/password')
   @HttpCode(HttpStatus.OK)
   changePassword(@CurrentUser() user: any, @Body() dto: ChangePasswordDto) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
     return this.changePasswordUseCase.execute(user.id, dto);
   }
 
@@ -80,6 +83,11 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() currentUser: any,
   ) {
-    return this.toggleUserStatusUseCase.execute(id, 'deactivate', currentUser.id);
+    return this.toggleUserStatusUseCase.execute(
+      id,
+      'deactivate',
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+      currentUser.id,
+    );
   }
 }

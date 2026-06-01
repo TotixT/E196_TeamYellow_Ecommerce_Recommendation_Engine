@@ -14,7 +14,11 @@ export class ToggleUserStatusUseCase {
   ) {}
 
   // EIE-005 escenarios 2 y 3: activate / deactivate user (soft status change)
-  async execute(userId: number, action: 'activate' | 'deactivate', currentUserId?: number) {
+  async execute(
+    userId: number,
+    action: 'activate' | 'deactivate',
+    currentUserId?: number,
+  ) {
     const user = await this.usersRepository.findById(userId);
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
@@ -22,7 +26,9 @@ export class ToggleUserStatusUseCase {
 
     // Prevent self-deactivation
     if (action === 'deactivate' && currentUserId && currentUserId === userId) {
-      throw new BadRequestException('No puedes desactivar tu propia cuenta de administrador');
+      throw new BadRequestException(
+        'No puedes desactivar tu propia cuenta de administrador',
+      );
     }
 
     if (action === 'deactivate' && user.status === 'inactive') {

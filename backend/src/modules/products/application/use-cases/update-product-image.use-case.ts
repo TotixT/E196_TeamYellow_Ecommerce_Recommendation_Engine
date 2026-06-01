@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  Inject,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { IProductsRepository } from '../../domain/interfaces/i-products-repository.interface';
 import { CloudinaryService } from '../../../../common/shared/cloudinary/cloudinary.service';
 import { ProductImage } from '../../domain/entities/product.entity';
@@ -23,25 +19,25 @@ export class UpdateProductImageUseCase {
     // Check product exists
     const product = await this.productsRepository.findById(productId);
     if (!product) {
-      throw new NotFoundException(
-        `Producto con ID ${productId} no encontrado`,
-      );
+      throw new NotFoundException(`Producto con ID ${productId} no encontrado`);
     }
 
     // Check image exists and belongs to this product
     const existingImage = await this.productsRepository.findImageById(imageId);
     if (!existingImage || existingImage.productId !== productId) {
-      throw new NotFoundException(`Imagen con ID ${imageId} no encontrada en este producto`);
+      throw new NotFoundException(
+        `Imagen con ID ${imageId} no encontrada en este producto`,
+      );
     }
 
     // cloudinaryPublicId contains folder + publicId (e.g. eie/smartphones/1/img-1)
     // We split it to pass to the cloudinary service to force overwrite
     const fullPath = existingImage.cloudinaryPublicId;
     const lastSlashIndex = fullPath.lastIndexOf('/');
-    
+
     let folder = '';
     let publicIdName = fullPath;
-    
+
     if (lastSlashIndex !== -1) {
       folder = fullPath.substring(0, lastSlashIndex);
       publicIdName = fullPath.substring(lastSlashIndex + 1);
@@ -62,17 +58,17 @@ export class UpdateProductImageUseCase {
       );
     }
 
-    // Update the image record in the database with the new URL 
+    // Update the image record in the database with the new URL
     // Cloudinary changes the version tag in the URL (e.g. v123456 -> v123457)
     // This guarantees the frontend receives a new URL and busts its cache.
     await this.productsRepository.updateImageUrl(imageId, uploadResult.url);
 
-    return { 
-      message: 'Imagen actualizada y sobrescrita exitosamente', 
+    return {
+      message: 'Imagen actualizada y sobrescrita exitosamente',
       image: {
         ...existingImage,
-        imageUrl: uploadResult.url
-      } 
+        imageUrl: uploadResult.url,
+      },
     };
   }
 }

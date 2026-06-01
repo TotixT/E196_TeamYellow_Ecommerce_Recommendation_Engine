@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Inject,
+} from '@nestjs/common';
 import { IProductsRepository } from '../../domain/interfaces/i-products-repository.interface';
 import { Product } from '../../domain/entities/product.entity';
 
@@ -19,10 +24,13 @@ export class ToggleProductStatusUseCase {
     }
 
     const newStatus = action === 'activate' ? 'active' : 'inactive';
-    
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
     if (existing.status === newStatus) {
       const statusLabel = action === 'activate' ? 'activo' : 'inactivo';
-      throw new BadRequestException(`El producto ya se encuentra ${statusLabel}`);
+      throw new BadRequestException(
+        `El producto ya se encuentra ${statusLabel}`,
+      );
     }
 
     const product = await this.productsRepository.updateStatus(id, newStatus);

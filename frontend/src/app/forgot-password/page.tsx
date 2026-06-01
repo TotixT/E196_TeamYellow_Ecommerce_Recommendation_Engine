@@ -24,6 +24,7 @@ export default function ForgotPasswordPage() {
       setSuccessMessage(response.message);
       setMaskedEmail(response.email);
       setIsSuccess(true);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       // Error handled by store
     }

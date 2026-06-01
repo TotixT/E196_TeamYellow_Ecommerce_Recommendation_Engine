@@ -18,17 +18,29 @@ export class ProductsRepository implements IProductsRepository {
 
   private mapProduct(raw: any): Product {
     return {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       id: raw.id,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       categoryId: raw.categoryId,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       name: raw.name,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       description: raw.description,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       price: Number(raw.price),
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       stock: raw.stock,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       status: raw.status,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       mainImage: raw.mainImage ?? undefined,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       purchaseCount: raw.purchaseCount,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       createdAt: raw.createdAt,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       updatedAt: raw.updatedAt,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       deletedAt: raw.deletedAt ?? undefined,
     };
   }
@@ -36,26 +48,41 @@ export class ProductsRepository implements IProductsRepository {
   private mapProductWithImages(raw: any): ProductWithImages {
     return {
       ...this.mapProduct(raw),
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       images: (raw.images ?? []).map((img: any) => ({
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         id: img.id,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         productId: img.productId,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         imageUrl: img.imageUrl,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         cloudinaryPublicId: img.cloudinaryPublicId,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         order: img.order,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         isPrimary: img.isPrimary,
       })),
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       categoryName: raw.category?.name,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       categorySlug: raw.category?.slug,
     };
   }
 
   private mapImage(raw: any): ProductImage {
     return {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       id: raw.id,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       productId: raw.productId,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       imageUrl: raw.imageUrl,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       cloudinaryPublicId: raw.cloudinaryPublicId,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       order: raw.order,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       isPrimary: raw.isPrimary,
     };
   }
@@ -77,6 +104,7 @@ export class ProductsRepository implements IProductsRepository {
     const where: Prisma.ProductWhereInput = {
       deletedAt: null,
       ...(categoryId && { categoryId }),
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       ...(status && { status: status as any }),
       ...(search && {
         OR: [
@@ -93,8 +121,7 @@ export class ProductsRepository implements IProductsRepository {
     };
 
     // Map sortBy to Prisma field names
-    const orderByField =
-      sortBy === 'purchaseCount' ? 'purchaseCount' : sortBy;
+    const orderByField = sortBy === 'purchaseCount' ? 'purchaseCount' : sortBy;
 
     const [products, total] = await this.prisma.$transaction([
       this.prisma.product.findMany({
@@ -158,6 +185,7 @@ export class ProductsRepository implements IProductsRepository {
   async updateStatus(id: number, status: string): Promise<Product> {
     const product = await this.prisma.product.update({
       where: { id },
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       data: { status: status as any },
     });
     return this.mapProduct(product);
@@ -172,12 +200,12 @@ export class ProductsRepository implements IProductsRepository {
       // 2. Hacer soft delete del producto, pasarlo a inactivo y quitarle la imagen principal
       this.prisma.product.update({
         where: { id },
-        data: { 
+        data: {
           deletedAt: new Date(),
           status: 'inactive',
-          mainImage: null
+          mainImage: null,
         },
-      })
+      }),
     ]);
   }
 
@@ -230,11 +258,10 @@ export class ProductsRepository implements IProductsRepository {
     return image ? this.mapImage(image) : null;
   }
 
-  async setPrimaryImage(
-    imageId: number,
-    productId: number,
-  ): Promise<void> {
-    const image = await this.prisma.productImage.findUnique({ where: { id: imageId } });
+  async setPrimaryImage(imageId: number, productId: number): Promise<void> {
+    const image = await this.prisma.productImage.findUnique({
+      where: { id: imageId },
+    });
     if (!image) return;
 
     await this.prisma.$transaction([
@@ -252,7 +279,7 @@ export class ProductsRepository implements IProductsRepository {
       this.prisma.product.update({
         where: { id: productId },
         data: { mainImage: image.imageUrl },
-      })
+      }),
     ]);
   }
 

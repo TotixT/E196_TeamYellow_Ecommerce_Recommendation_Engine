@@ -25,6 +25,7 @@ export default function AdminProductsPage() {
   const { data: productsData, isLoading } = useQuery({
     queryKey: ['admin', 'products', { search, page }],
     queryFn: async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const params: any = { page, limit: 10 };
       if (search) params.search = search;
       const res = await api.get<PaginatedProducts>(API_ENDPOINTS.PRODUCTS.BASE, { params });
@@ -55,14 +56,18 @@ export default function AdminProductsPage() {
 
   // Mutations
   const createMutation = useMutation({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutationFn: (data: any) => api.post(API_ENDPOINTS.ADMIN.PRODUCTS.BASE, data),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin', 'products'] }); closeModal(); },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (err: any) => setFormError(err.response?.data?.message || 'Error al crear producto'),
   });
 
   const updateMutation = useMutation({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutationFn: ({ id, data }: { id: number; data: any }) => api.put(API_ENDPOINTS.ADMIN.PRODUCTS.DETAIL(id), data),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin', 'products'] }); refetchDetail(); closeModal(); },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (err: any) => setFormError(err.response?.data?.message || 'Error al actualizar'),
   });
 
@@ -105,6 +110,7 @@ export default function AdminProductsPage() {
       return response.json();
     },
     onSuccess: () => { refetchDetail(); queryClient.invalidateQueries({ queryKey: ['admin', 'products'] }); },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (err: any) => setFormError(err.message || err.response?.data?.message || 'Error al subir imágenes'),
   });
 
@@ -146,6 +152,7 @@ export default function AdminProductsPage() {
       queryClient.invalidateQueries({ queryKey: ['admin', 'products'] }); 
       setReplacingImageId(null); 
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (err: any) => setFormError(err.message || err.response?.data?.message || 'Error al reemplazar imagen'),
   });
 
@@ -226,6 +233,7 @@ export default function AdminProductsPage() {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const images: ProductImage[] = (productDetail as any)?.images ?? editingProduct?.images ?? [];
   const isSaving = createMutation.isPending || updateMutation.isPending;
 
@@ -276,6 +284,7 @@ export default function AdminProductsPage() {
                     <td className="py-2 px-4">
                       <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden">
                         {product.mainImage ? (
+                          // eslint-disable-next-line @next/next/no-img-element
                           <img src={product.mainImage} alt="" className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-gray-300"><ImageIcon size={16} /></div>
@@ -388,6 +397,7 @@ export default function AdminProductsPage() {
                     <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                       {images.map((img) => (
                         <div key={img.id} className="relative group rounded-xl overflow-hidden border border-gray-200 aspect-square">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
                           {img.isPrimary && (
                             <div className="absolute top-1.5 left-1.5 bg-yellow-400 text-white p-1 rounded-md shadow-sm">

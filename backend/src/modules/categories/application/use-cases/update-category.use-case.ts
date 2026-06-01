@@ -7,6 +7,7 @@ import {
 import { ICategoriesRepository } from '../../domain/interfaces/i-categories-repository.interface';
 import { UpdateCategoryDto } from '../dtos/update-category.dto';
 import { Category } from '../../domain/entities/category.entity';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { slugify } from '../../../../common/utils/slugify';
 
 @Injectable()
@@ -25,7 +26,8 @@ export class UpdateCategoryUseCase {
       throw new NotFoundException(`Categoría con ID ${id} no encontrada`);
     }
 
-    const updateData: { name?: string; slug?: string; description?: string } = {};
+    const updateData: { name?: string; slug?: string; description?: string } =
+      {};
 
     if (dto.name && dto.name.trim() !== existing.name) {
       // Check name uniqueness

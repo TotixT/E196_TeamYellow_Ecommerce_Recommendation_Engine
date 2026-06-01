@@ -17,7 +17,9 @@ export class ForgotPasswordUseCase {
     private readonly mailService: MailService,
   ) {}
 
-  async execute(dto: ForgotPasswordDto): Promise<{ message: string; email: string }> {
+  async execute(
+    dto: ForgotPasswordDto,
+  ): Promise<{ message: string; email: string }> {
     const user = await this.authRepository.findByEmail(dto.email.toLowerCase());
 
     if (!user) {
@@ -33,7 +35,8 @@ export class ForgotPasswordUseCase {
     );
 
     // Send the reset email — uses FRONTEND_URL for the link button
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+    const frontendUrl =
+      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
     const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`;
 
     await this.mailService.sendPasswordResetEmail(user.email, {
@@ -58,4 +61,3 @@ export class ForgotPasswordUseCase {
     };
   }
 }
-

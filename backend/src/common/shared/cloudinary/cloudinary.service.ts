@@ -42,7 +42,7 @@ export class CloudinaryService {
           resource_type: 'image',
           transformation: [
             { width: 1000, height: 1000, crop: 'pad', background: 'white' },
-            { quality: 'auto', fetch_format: 'auto' }
+            { quality: 'auto', fetch_format: 'auto' },
           ],
         },
         (error: any, result?: UploadApiResponse) => {

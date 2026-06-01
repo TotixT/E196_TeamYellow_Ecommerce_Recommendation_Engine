@@ -55,10 +55,7 @@ export class GetMonthlySalesUseCase {
       totalRevenue: Number(row.totalrevenue),
     }));
 
-    const totalAccumulated = months.reduce(
-      (sum, m) => sum + m.totalRevenue,
-      0,
-    );
+    const totalAccumulated = months.reduce((sum, m) => sum + m.totalRevenue, 0);
 
     return {
       year: targetYear,

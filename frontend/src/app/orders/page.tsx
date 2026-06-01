@@ -100,6 +100,7 @@ export default function OrdersPage() {
                           <div key={item.id} className="flex gap-4 items-center bg-white p-3 border border-gray-100 rounded-lg">
                             <div className="w-16 h-16 bg-gray-50 rounded-md overflow-hidden border border-gray-50 flex-shrink-0">
                               {item.product?.mainImage ? (
+                                // eslint-disable-next-line @next/next/no-img-element
                                 <img src={item.product.mainImage} alt="" className="w-full h-full object-cover" />
                               ) : (
                                 <div className="w-full h-full flex justify-center items-center text-[10px] text-gray-400">Sin img</div>

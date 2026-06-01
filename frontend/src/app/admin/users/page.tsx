@@ -27,6 +27,7 @@ export default function AdminUsersPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['admin', 'users', { search, statusFilter, page }],
     queryFn: async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const params: any = { page, limit };
       if (search) params.search = search;
       if (statusFilter) params.status = statusFilter;

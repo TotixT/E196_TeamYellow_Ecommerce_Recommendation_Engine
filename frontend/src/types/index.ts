@@ -127,6 +127,7 @@ export interface Order {
 }
 
 // ── Recommendations ──────────────────────────────
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface Recommendation extends Product {}
 
 // ── Admin Reports ────────────────────────────────

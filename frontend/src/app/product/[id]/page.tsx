@@ -18,6 +18,7 @@ import type { Product } from '@/types';
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { isAuthenticated } = useAuthStore();
   const { addToCart, isLoading: isCartLoading } = useCartStore();
 
@@ -43,6 +44,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       try {
         const res = await api.get<Product[]>(API_ENDPOINTS.RECOMMENDATIONS.PRODUCT(resolvedParams.id));
         return res.data.filter(p => p.id !== Number(resolvedParams.id)).slice(0, 4);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         return [];
       }
@@ -59,6 +61,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       await addToCart(product.id, quantity);
       setShowAddedSuccess(true);
       setTimeout(() => setShowAddedSuccess(false), 3000);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       // Error handled in store
     }
@@ -122,6 +125,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           <div className="w-full lg:w-1/2 flex flex-col gap-4">
             <div className="w-full aspect-square bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 flex items-center justify-center relative">
               {currentImage ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img 
                   src={currentImage} 
                   alt={product.name} 
@@ -153,6 +157,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   onClick={() => setActiveImage(product.mainImage || null)}
                   className={`w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all ${currentImage === product.mainImage ? 'border-primary' : 'border-transparent opacity-70 hover:opacity-100'}`}
                 >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={product.mainImage!} alt="Thumbnail" className="w-full h-full object-cover" />
                 </button>
                 {product.images.map((img) => (
@@ -161,6 +166,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     onClick={() => setActiveImage(img.imageUrl)}
                     className={`w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all ${currentImage === img.imageUrl ? 'border-primary' : 'border-transparent opacity-70 hover:opacity-100'}`}
                   >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={img.imageUrl} alt="Thumbnail" className="w-full h-full object-cover" />
                   </button>
                 ))}

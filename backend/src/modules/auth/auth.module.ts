@@ -26,6 +26,7 @@ import { MailModule } from '../../common/shared/mail/mail.module';
       useFactory: (config: ConfigService) => ({
         secret: config.getOrThrow<string>('JWT_SECRET'),
         signOptions: {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           expiresIn: config.get<string>('JWT_EXPIRES_IN', '24h') as any,
         },
       }),
@@ -53,4 +54,3 @@ import { MailModule } from '../../common/shared/mail/mail.module';
   exports: [JwtModule, PassportModule],
 })
 export class AuthModule {}
-

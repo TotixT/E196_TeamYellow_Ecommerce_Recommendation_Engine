@@ -6,6 +6,7 @@ import { createContext, useContext, useReducer, ReactNode } from 'react';
 // TODO: Define action types
 // TODO: Implement reducer
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface AppState {
   // TODO: Add application state shape
 }
@@ -14,10 +15,12 @@ const initialState: AppState = {};
 
 const AppContext = createContext<{
   state: AppState;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dispatch: React.Dispatch<any>;
 } | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
   const [state, dispatch] = useReducer((state: AppState, action: any) => {
     // TODO: Implement reducer logic
     return state;

@@ -20,7 +20,14 @@ export interface ICategoriesRepository {
   findById(id: number): Promise<Category | null>;
   findBySlug(slug: string): Promise<Category | null>;
   findByName(name: string): Promise<Category | null>;
-  create(data: { name: string; slug: string; description?: string }): Promise<Category>;
-  update(id: number, data: { name?: string; slug?: string; description?: string }): Promise<Category>;
+  create(data: {
+    name: string;
+    slug: string;
+    description?: string;
+  }): Promise<Category>;
+  update(
+    id: number,
+    data: { name?: string; slug?: string; description?: string },
+  ): Promise<Category>;
   updateStatus(id: number, status: string): Promise<Category>;
 }

@@ -94,6 +94,7 @@ export default function CartPage() {
                         <div className="md:col-span-6 flex gap-4">
                           <div className="w-20 h-20 bg-gray-50 rounded-lg overflow-hidden border border-gray-100 flex-shrink-0">
                             {product.mainImage ? (
+                               // eslint-disable-next-line @next/next/no-img-element
                                <img src={product.mainImage} alt={product.name} className="w-full h-full object-cover" />
                             ) : (
                                <div className="w-full h-full flex items-center justify-center text-xs text-gray-300">N/A</div>

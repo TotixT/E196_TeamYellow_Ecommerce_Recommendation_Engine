@@ -1,5 +1,9 @@
+/* eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/no-unused-vars */
+ 
 const axios = require('axios');
+ 
 const FormData = require('form-data');
+ 
 const fs = require('fs');
 
 const api = axios.create();

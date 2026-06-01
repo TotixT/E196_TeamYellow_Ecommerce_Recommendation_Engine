@@ -19,9 +19,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const res = exception.getResponse();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       message =
         typeof res === 'object' && 'message' in res
-          ? (res as any).message
+          ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            (res as any).message
           : exception.message;
     } else {
       console.error('Unhandled Exception:', exception);

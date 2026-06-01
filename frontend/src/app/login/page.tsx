@@ -44,6 +44,7 @@ export default function LoginPage() {
       } else {
         router.replace('/');
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       // Error is handled by the store
     }
@@ -58,6 +59,7 @@ export default function LoginPage() {
       >
         <div className="relative z-10 max-w-md">
           <Link href="/" className="inline-flex bg-white/10 w-16 h-16 rounded-2xl items-center justify-center mb-8 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-colors shadow-lg overflow-hidden" title="Volver al inicio">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="https://res.cloudinary.com/ds7js53vz/image/upload/v1779898616/eie/logos/EIE_Imagen.jpg" alt="Logo" className="w-full h-full object-cover" />
           </Link>
           <h1 className="text-4xl font-bold mb-4 leading-tight">
@@ -71,6 +73,7 @@ export default function LoginPage() {
         
         {/* Background Decorative Logo */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-10 select-none pointer-events-none rounded-full overflow-hidden mix-blend-overlay">
+           {/* eslint-disable-next-line @next/next/no-img-element */}
            <img src="https://res.cloudinary.com/ds7js53vz/image/upload/v1779898616/eie/logos/EIE_Imagen.jpg" alt="" className="w-full h-full object-cover" />
         </div>
         
@@ -84,6 +87,7 @@ export default function LoginPage() {
         <div className="max-w-sm w-full mx-auto">
           <div className="mb-8 lg:hidden flex justify-between items-center">
              <Link href="/" className="w-12 h-12 rounded-xl flex items-center justify-center shadow-md hover:opacity-90 transition-opacity overflow-hidden" title="Volver al inicio">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="https://res.cloudinary.com/ds7js53vz/image/upload/v1779898616/eie/logos/EIE_Imagen.jpg" alt="Logo" className="w-full h-full object-cover" />
             </Link>
           </div>

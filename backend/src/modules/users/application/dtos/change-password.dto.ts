@@ -1,4 +1,10 @@
-import { IsString, MinLength, MaxLength, Matches, IsNotEmpty } from 'class-validator';
+import {
+  IsString,
+  MinLength,
+  MaxLength,
+  Matches,
+  IsNotEmpty,
+} from 'class-validator';
 
 export class ChangePasswordDto {
   @IsString()
@@ -12,6 +18,7 @@ export class ChangePasswordDto {
   @Matches(/(?=.*[A-Z])/, {
     message: 'La contraseña debe tener al menos una letra mayúscula',
   })
+  // eslint-disable-next-line no-useless-escape
   @Matches(/(?=.*[!@#$%^&*()\-_=+\[\]{};':"\\|,.<>/?`~])/, {
     message: 'La contraseña debe tener al menos un carácter especial',
   })

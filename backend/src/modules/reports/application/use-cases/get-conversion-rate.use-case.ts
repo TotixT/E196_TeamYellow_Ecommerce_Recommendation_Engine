@@ -79,9 +79,7 @@ export class GetConversionRateUseCase {
     `;
 
     // Monthly breakdown - purchases
-    const monthlyPurchases = await this.prisma.$queryRaw<
-      MonthlyPurchaseRow[]
-    >`
+    const monthlyPurchases = await this.prisma.$queryRaw<MonthlyPurchaseRow[]>`
       SELECT
         EXTRACT(MONTH FROM created_at)::int AS month,
         COUNT(DISTINCT COALESCE(user_id::text, session_id))::int AS purchases

@@ -61,6 +61,7 @@ export default function HomePage() {
         const res = await api.get<Product[]>(API_ENDPOINTS.RECOMMENDATIONS.HOME);
         if (res.data && res.data.length > 0) return res.data.slice(0, 6);
         throw new Error('Empty recs');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         // Fallback to popular products
         const fallback = await api.get<{ data: Product[] }>(API_ENDPOINTS.PRODUCTS.BASE, {

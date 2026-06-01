@@ -15,7 +15,9 @@ export class CreateCategoryUseCase {
     dto: CreateCategoryDto,
   ): Promise<{ message: string; category: Category }> {
     // Check name uniqueness (case-insensitive handled by DB unique constraint)
-    const existing = await this.categoriesRepository.findByName(dto.name.trim());
+    const existing = await this.categoriesRepository.findByName(
+      dto.name.trim(),
+    );
     if (existing) {
       throw new ConflictException('Ya existe una categoría con este nombre');
     }

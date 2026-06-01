@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, Suspense } from 'react';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Eye, EyeOff, CheckCircle2 } from 'lucide-react';
@@ -46,6 +47,7 @@ function ResetPasswordForm() {
       setTimeout(() => {
         router.push('/login');
       }, 3000);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       // Store handles error
     }

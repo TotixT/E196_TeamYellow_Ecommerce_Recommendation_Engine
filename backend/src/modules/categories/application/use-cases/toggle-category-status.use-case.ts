@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Inject,
+} from '@nestjs/common';
 import { ICategoriesRepository } from '../../domain/interfaces/i-categories-repository.interface';
 import { Category } from '../../domain/entities/category.entity';
 
@@ -19,12 +24,18 @@ export class ToggleCategoryStatusUseCase {
     }
 
     const newStatus = action === 'activate' ? 'active' : 'inactive';
-    
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
     if (existing.status === newStatus) {
       const statusLabel = action === 'activate' ? 'activa' : 'inactiva';
-      throw new BadRequestException(`La categoría ya se encuentra ${statusLabel}`);
+      throw new BadRequestException(
+        `La categoría ya se encuentra ${statusLabel}`,
+      );
     }
-    const category = await this.categoriesRepository.updateStatus(id, newStatus);
+    const category = await this.categoriesRepository.updateStatus(
+      id,
+      newStatus,
+    );
 
     const statusLabel = action === 'activate' ? 'activada' : 'desactivada';
     return {

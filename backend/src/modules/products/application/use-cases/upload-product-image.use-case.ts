@@ -25,9 +25,7 @@ export class UploadProductImageUseCase {
     // Validate product exists
     const product = await this.productsRepository.findById(productId);
     if (!product) {
-      throw new NotFoundException(
-        `Producto con ID ${productId} no encontrado`,
-      );
+      throw new NotFoundException(`Producto con ID ${productId} no encontrado`);
     }
 
     // Check max images limit
@@ -79,9 +77,9 @@ export class UploadProductImageUseCase {
       currentCount++;
     }
 
-    return { 
-      message: `${files.length} imagen(es) subida(s) exitosamente`, 
-      images: uploadedImages 
+    return {
+      message: `${files.length} imagen(es) subida(s) exitosamente`,
+      images: uploadedImages,
     };
   }
 }

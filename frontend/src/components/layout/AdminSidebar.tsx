@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { LayoutDashboard, Users, FolderTree, Package, ShoppingBag, BarChart2, Star } from 'lucide-react';
 
 const ADMIN_LINKS = [

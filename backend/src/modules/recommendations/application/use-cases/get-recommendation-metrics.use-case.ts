@@ -7,7 +7,7 @@ export class GetRecommendationMetricsUseCase {
 
   async execute(period: 'day' | 'week' | 'month' = 'week') {
     const now = new Date();
-    let startDate = new Date();
+    const startDate = new Date();
     if (period === 'day') startDate.setDate(now.getDate() - 1);
     else if (period === 'week') startDate.setDate(now.getDate() - 7);
     else if (period === 'month') startDate.setMonth(now.getMonth() - 1);
@@ -29,7 +29,8 @@ export class GetRecommendationMetricsUseCase {
       },
     });
 
-    const ctr = impressionsCount > 0 ? (clicksCount / impressionsCount) * 100 : 0;
+    const ctr =
+      impressionsCount > 0 ? (clicksCount / impressionsCount) * 100 : 0;
 
     // 2. Calculate Conversion Rate from Recommendations
     // Purchases that happened where the user also clicked a recommendation recently
@@ -45,12 +46,17 @@ export class GetRecommendationMetricsUseCase {
     // in the same session or recently before the purchase.
     // Let's approximate: count distinct users who purchased AND clicked a recommendation in the period.
     const clickingUsers = await this.prisma.behaviorEvent.findMany({
-      where: { eventType: 'CLICK_RECOMMENDATION', createdAt: { gte: startDate } },
+      where: {
+        eventType: 'CLICK_RECOMMENDATION',
+        createdAt: { gte: startDate },
+      },
       select: { userId: true },
       distinct: ['userId'],
     });
 
-    const clickingUserIds = clickingUsers.map(u => u.userId).filter(id => id !== null) as number[];
+    const clickingUserIds = clickingUsers
+      .map((u) => u.userId)
+      .filter((id) => id !== null);
 
     const convertedPurchases = await this.prisma.behaviorEvent.count({
       where: {
@@ -60,7 +66,8 @@ export class GetRecommendationMetricsUseCase {
       },
     });
 
-    const conversionRate = totalPurchases > 0 ? (convertedPurchases / totalPurchases) * 100 : 0;
+    const conversionRate =
+      totalPurchases > 0 ? (convertedPurchases / totalPurchases) * 100 : 0;
 
     return {
       period,

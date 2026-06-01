@@ -8,6 +8,8 @@ export class CreateCategoryDto {
 
   @IsOptional()
   @IsString()
-  @MaxLength(500, { message: 'La descripción no puede tener más de 500 caracteres' })
+  @MaxLength(500, {
+    message: 'La descripción no puede tener más de 500 caracteres',
+  })
   description?: string;
 }

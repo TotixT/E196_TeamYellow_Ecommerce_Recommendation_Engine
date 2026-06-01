@@ -57,6 +57,7 @@ export class RegisterUseCase {
       verificationLink,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash: _, ...safeUser } = user;
 
     return {

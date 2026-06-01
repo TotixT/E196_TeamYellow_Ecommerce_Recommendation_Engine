@@ -19,7 +19,9 @@ export class AuthRepository implements IAuthRepository {
       phone: user.phone ?? undefined,
       address: user.address ?? undefined,
       city: user.city ?? undefined,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       role: user.role as any,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       status: user.status as any,
       failedAttempts: user.failedAttempts,
       createdAt: user.createdAt,
@@ -39,7 +41,9 @@ export class AuthRepository implements IAuthRepository {
       fullName: user.fullName,
       email: user.email,
       passwordHash: user.passwordHash,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       role: user.role as any,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       status: user.status as any,
       failedAttempts: user.failedAttempts,
       createdAt: user.createdAt,
@@ -88,24 +92,21 @@ export class AuthRepository implements IAuthRepository {
   } | null> {
     return this.prisma.verificationToken.findFirst({
       where: {
-        OR: [
-          { code: codeOrToken },
-          { token: codeOrToken }
-        ]
-      }
+        OR: [{ code: codeOrToken }, { token: codeOrToken }],
+      },
     });
   }
 
   async activateUser(userId: number): Promise<void> {
     await this.prisma.user.update({
       where: { id: userId },
-      data: { status: 'active' }
+      data: { status: 'active' },
     });
   }
 
   async deleteVerificationTokens(userId: number): Promise<void> {
     await this.prisma.verificationToken.deleteMany({
-      where: { userId }
+      where: { userId },
     });
   }
 }

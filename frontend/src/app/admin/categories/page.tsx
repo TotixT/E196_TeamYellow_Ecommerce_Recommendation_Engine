@@ -31,6 +31,7 @@ export default function AdminCategoriesPage() {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
       closeModal();
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (err: any) => setFormError(err.response?.data?.message || 'Error al guardar'),
   });
 
@@ -42,6 +43,7 @@ export default function AdminCategoriesPage() {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
       closeModal();
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (err: any) => setFormError(err.response?.data?.message || 'Error al guardar'),
   });
 

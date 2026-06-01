@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  Inject,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { ICartsRepository } from '../../domain/interfaces/i-carts-repository.interface';
 
 @Injectable()

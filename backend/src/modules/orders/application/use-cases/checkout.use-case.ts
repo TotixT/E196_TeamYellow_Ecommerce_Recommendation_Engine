@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  BadRequestException,
-  Inject,
-} from '@nestjs/common';
+import { Injectable, BadRequestException, Inject } from '@nestjs/common';
 import { IOrdersRepository } from '../../domain/interfaces/i-orders-repository.interface';
 import { ICartsRepository } from '../../../carts/domain/interfaces/i-carts-repository.interface';
 import { CheckoutDto } from '../dtos/checkout.dto';
@@ -55,21 +51,22 @@ export class CheckoutUseCase {
     });
 
     // Fire and forget email notification
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.mailService.sendOrderConfirmation(userEmail, {
       orderNumber: order.orderNumber,
       customerName: dto.shippingName,
-      items: order.items.map(i => ({
+      items: order.items.map((i) => ({
         productName: i.product?.name || 'Producto',
         quantity: i.quantity,
         unitPrice: i.unitPrice,
-        lineTotal: i.lineTotal
+        lineTotal: i.lineTotal,
       })),
       subtotal: order.subtotal,
       shippingCost: order.shippingCost,
       total: order.total,
       shippingAddress: dto.shippingAddress,
       shippingCity: dto.shippingCity,
-      estimatedDelivery: estimatedDelivery
+      estimatedDelivery: estimatedDelivery,
     });
 
     // EIE-012: Asynchronous tracking of PURCHASE event
@@ -77,12 +74,12 @@ export class CheckoutUseCase {
       'order.purchased',
       new OrderPurchasedEvent(
         userId,
-        order.items.map(i => ({
+        order.items.map((i) => ({
           productId: i.productId,
           quantity: i.quantity,
-          unitPrice: i.unitPrice
-        }))
-      )
+          unitPrice: i.unitPrice,
+        })),
+      ),
     );
 
     return {

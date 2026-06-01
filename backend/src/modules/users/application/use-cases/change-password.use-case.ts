@@ -22,9 +22,14 @@ export class ChangePasswordUseCase {
     }
 
     // EIE-004 escenario 3: verify current password first
-    const isCurrentValid = await bcrypt.compare(dto.currentPassword, currentHash);
+    const isCurrentValid = await bcrypt.compare(
+      dto.currentPassword,
+      currentHash,
+    );
     if (!isCurrentValid) {
-      throw new BadRequestException('La contraseña actual ingresada es incorrecta');
+      throw new BadRequestException(
+        'La contraseña actual ingresada es incorrecta',
+      );
     }
 
     // EIE-016: bcrypt cost 12 always

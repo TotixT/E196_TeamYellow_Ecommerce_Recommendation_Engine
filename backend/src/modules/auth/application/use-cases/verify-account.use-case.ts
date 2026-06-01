@@ -9,21 +9,28 @@ export class VerifyAccountUseCase {
   ) {}
 
   async execute(codeOrToken: string): Promise<{ message: string }> {
-    const verificationRecord = await this.authRepository.findVerificationToken(codeOrToken);
-    
+    const verificationRecord =
+      await this.authRepository.findVerificationToken(codeOrToken);
+
     if (!verificationRecord) {
-      throw new BadRequestException('Código o enlace de verificación inválido.');
+      throw new BadRequestException(
+        'Código o enlace de verificación inválido.',
+      );
     }
 
     if (new Date() > verificationRecord.expiresAt) {
-      throw new BadRequestException('El código o enlace de verificación ha expirado.');
+      throw new BadRequestException(
+        'El código o enlace de verificación ha expirado.',
+      );
     }
 
     // Activate the user
     await this.authRepository.activateUser(verificationRecord.userId);
 
     // Delete verification tokens for this user so they can't be reused
-    await this.authRepository.deleteVerificationTokens(verificationRecord.userId);
+    await this.authRepository.deleteVerificationTokens(
+      verificationRecord.userId,
+    );
 
     return {
       message: 'Cuenta verificada exitosamente. Ya puedes iniciar sesión.',

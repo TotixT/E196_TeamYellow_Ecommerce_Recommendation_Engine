@@ -10,21 +10,35 @@ export class RecommendationsService {
   ) {}
 
   async getHistoryBasedRecommendations(userId: number) {
-    const categoryIds = await this.recommendationsRepository.getUserPurchasedCategoryIds(userId);
+    const categoryIds =
+      await this.recommendationsRepository.getUserPurchasedCategoryIds(userId);
     if (categoryIds.length === 0) return [];
-    
-    return this.recommendationsRepository.getUnpurchasedProductsByCategories(userId, categoryIds, 8);
+
+    return this.recommendationsRepository.getUnpurchasedProductsByCategories(
+      userId,
+      categoryIds,
+      8,
+    );
   }
 
   async getSessionBasedRecommendations(sessionId: string, userId?: number) {
-    const categoryIds = await this.recommendationsRepository.getRecentViewedCategoryIds(sessionId, userId, 10);
+    const categoryIds =
+      await this.recommendationsRepository.getRecentViewedCategoryIds(
+        sessionId,
+        userId,
+        10,
+      );
     if (categoryIds.length === 0) return [];
 
-    // If userId exists, we can exclude purchased products. 
+    // If userId exists, we can exclude purchased products.
     // For simplicity and matching requirements, we'll use the same repository method if userId is present.
     // If anonymous, we just fetch popular products from those categories.
     if (userId) {
-      return this.recommendationsRepository.getUnpurchasedProductsByCategories(userId, categoryIds, 8);
+      return this.recommendationsRepository.getUnpurchasedProductsByCategories(
+        userId,
+        categoryIds,
+        8,
+      );
     } else {
       return this.prisma.product.findMany({
         where: { categoryId: { in: categoryIds }, status: 'active' },
@@ -44,7 +58,11 @@ export class RecommendationsService {
       throw new NotFoundException('Producto no encontrado');
     }
 
-    return this.recommendationsRepository.getSimilarProducts(product.categoryId, productId, 6);
+    return this.recommendationsRepository.getSimilarProducts(
+      product.categoryId,
+      productId,
+      6,
+    );
   }
 
   async getHomeRecommendations(userId?: number, sessionId?: string) {
@@ -57,7 +75,10 @@ export class RecommendationsService {
 
     if (userId || sessionId) {
       // Si no tiene historial de compras pero ha visto productos, usar la sesión o el ID del usuario
-      const sessionRecs = await this.getSessionBasedRecommendations(sessionId || '', userId);
+      const sessionRecs = await this.getSessionBasedRecommendations(
+        sessionId || '',
+        userId,
+      );
       if (sessionRecs.length > 0) {
         return sessionRecs;
       }

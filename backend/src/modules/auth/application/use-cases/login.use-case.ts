@@ -33,6 +33,7 @@ export class LoginUseCase {
 
     // EIE-002 escenario 3: inactive account — specific message ONLY after we
     // know the user exists, so we don't reveal email existence to attackers
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
     if (user.status === 'inactive') {
       throw new ForbiddenException(
         'Tu cuenta se encuentra desactivada. Contacta al administrador.',

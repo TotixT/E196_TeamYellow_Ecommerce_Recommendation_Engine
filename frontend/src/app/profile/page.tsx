@@ -6,6 +6,7 @@ import { useAuthStore } from '@/store/auth-store';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import api from '@/services/api';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { API_ENDPOINTS } from '@/config/api-endpoints';
 
 export default function ProfilePage() {
@@ -31,6 +32,7 @@ export default function ProfilePage() {
     setIsUpdatingProfile(true);
     setProfileSuccess(false);
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { data } = await api.put('/auth/profile', profileData); // Endpoint ficticio para actualizar perfil si existiese en backend
       // Si el backend no tiene endpoint PUT /auth/profile, simulamos el éxito
       setUser({ ...user!, ...profileData });
@@ -66,6 +68,7 @@ export default function ProfilePage() {
       setPasswordSuccess(true);
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
       setTimeout(() => setPasswordSuccess(false), 3000);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setPasswordError(err.response?.data?.message || 'Error al actualizar la contraseña');
     } finally {

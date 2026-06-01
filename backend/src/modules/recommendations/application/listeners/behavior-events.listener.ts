@@ -15,7 +15,11 @@ export class ProductViewedEvent {
 export class OrderPurchasedEvent {
   constructor(
     public readonly userId: number,
-    public readonly items: { productId: number; quantity: number; unitPrice: number }[],
+    public readonly items: {
+      productId: number;
+      quantity: number;
+      unitPrice: number;
+    }[],
   ) {}
 }
 
@@ -52,10 +56,14 @@ export class BehaviorEventsListener {
       // EIE-QA: Invalidate session cache and home cache immediately so the UI reflects the new view!
       const userIdStr = payload.userId || 'anonymous';
       const sessionIdStr = payload.sessionId || 'no-session';
-      await this.cacheManager.del(`/api/v1/recommendations/session-${userIdStr}-${sessionIdStr}`);
-      await this.cacheManager.del(`/api/v1/recommendations/home-${userIdStr}-${sessionIdStr}`);
-      
+      await this.cacheManager.del(
+        `/api/v1/recommendations/session-${userIdStr}-${sessionIdStr}`,
+      );
+      await this.cacheManager.del(
+        `/api/v1/recommendations/home-${userIdStr}-${sessionIdStr}`,
+      );
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.logger.error(`Failed to track product.viewed: ${error.message}`);
     }
   }
@@ -63,7 +71,7 @@ export class BehaviorEventsListener {
   @OnEvent('order.purchased', { async: true })
   async handleOrderPurchasedEvent(payload: OrderPurchasedEvent) {
     try {
-      const eventsData = payload.items.map(item => ({
+      const eventsData = payload.items.map((item) => ({
         eventType: 'PURCHASE' as const,
         productId: item.productId,
         userId: payload.userId,
@@ -77,11 +85,18 @@ export class BehaviorEventsListener {
 
       // EIE-QA: Invalidate home and history caches for this user
       const userIdStr = payload.userId;
-      await this.cacheManager.del(`/api/v1/recommendations/home-${userIdStr}-no-session`);
-      await this.cacheManager.del(`/api/v1/recommendations/history-${userIdStr}-no-session`);
+      await this.cacheManager.del(
+        `/api/v1/recommendations/home-${userIdStr}-no-session`,
+      );
+      await this.cacheManager.del(
+        `/api/v1/recommendations/history-${userIdStr}-no-session`,
+      );
 
-      this.logger.log(`Tracked ${eventsData.length} PURCHASE events for user ${payload.userId}`);
+      this.logger.log(
+        `Tracked ${eventsData.length} PURCHASE events for user ${payload.userId}`,
+      );
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.logger.error(`Failed to track order.purchased: ${error.message}`);
     }
   }
@@ -99,7 +114,10 @@ export class BehaviorEventsListener {
         },
       });
     } catch (error) {
-      this.logger.error(`Failed to track recommendation.clicked: ${error.message}`);
+      this.logger.error(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        `Failed to track recommendation.clicked: ${error.message}`,
+      );
     }
   }
 }

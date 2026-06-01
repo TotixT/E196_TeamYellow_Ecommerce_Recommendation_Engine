@@ -30,8 +30,7 @@ export class DeleteProductImageUseCase {
 
     // If it was the primary image, re-assign to the next available image
     if (image.isPrimary) {
-      const nextImage =
-        await this.productsRepository.findFirstImage(productId);
+      const nextImage = await this.productsRepository.findFirstImage(productId);
       if (nextImage) {
         await this.productsRepository.setPrimaryImage(nextImage.id, productId);
         await this.productsRepository.updateMainImage(

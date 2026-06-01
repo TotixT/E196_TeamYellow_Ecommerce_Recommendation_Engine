@@ -19,21 +19,6 @@ function VerifyAccountContent() {
   const [message, setMessage] = useState('');
   const [countdown, setCountdown] = useState(0);
 
-  // Auto-verify if token is present in URL
-  useEffect(() => {
-    if (tokenParam) {
-      verifyCodeOrToken(tokenParam);
-    }
-  }, [tokenParam]);
-
-  // Countdown timer for resend
-  useEffect(() => {
-    if (countdown > 0) {
-      const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [countdown]);
-
   const verifyCodeOrToken = async (codeOrToken: string) => {
     setStatus('loading');
     setMessage('');
@@ -44,11 +29,28 @@ function VerifyAccountContent() {
       setTimeout(() => {
         router.push('/login');
       }, 3000);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setStatus('error');
       setMessage(err.response?.data?.message || 'Código o enlace inválido/expirado.');
     }
   };
+
+  // Auto-verify if token is present in URL
+  useEffect(() => {
+    if (tokenParam) {
+      verifyCodeOrToken(tokenParam);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokenParam]);
+
+  // Countdown timer for resend
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
 
   const handleCodeChange = (index: number, value: string) => {
     if (value.length > 1) return; // Only 1 digit per input
@@ -85,6 +87,7 @@ function VerifyAccountContent() {
       setCountdown(60); // Start 60 seconds cooldown
       setStatus('idle');
       setMessage('Código reenviado exitosamente a tu correo.');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setStatus('error');
       setMessage(err.response?.data?.message || 'Error al reenviar el código.');
