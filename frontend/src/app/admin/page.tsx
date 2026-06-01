@@ -99,7 +99,7 @@ export default function AdminDashboardPage() {
                 <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#6b7280' }} />
                 <YAxis tick={{ fontSize: 12, fill: '#6b7280' }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
                 <Tooltip
-                  formatter={(value: number) => [formatCOP(value), 'Ingresos']}
+                  formatter={(value: any) => [formatCOP(Number(value)), 'Ingresos']}
                   contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '13px' }}
                 />
                 <Bar dataKey="revenue" fill="#2E75B6" radius={[6, 6, 0, 0]} />
