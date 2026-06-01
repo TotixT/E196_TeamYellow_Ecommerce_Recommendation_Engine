@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as nodemailer from 'nodemailer';
+import * as sgMail from '@sendgrid/mail';
 
 export interface OrderEmailData {
   orderNumber: string;
@@ -21,26 +21,19 @@ export interface OrderEmailData {
 
 @Injectable()
 export class MailService {
-  private transporter: nodemailer.Transporter;
   private readonly logger = new Logger(MailService.name);
 
   constructor(private readonly configService: ConfigService) {
-    const port = Number(this.configService.get<string | number>('SMTP_PORT'));
-    this.transporter = nodemailer.createTransport({
-      host: this.configService.get<string>('SMTP_HOST'),
-      port: port,
-      secure: port === 465, // true for 465 (implicit TLS), false for other ports
-      auth: {
-        user: this.configService.get<string>('SMTP_USER'),
-        pass: this.configService.get<string>('SMTP_PASS'),
-      },
-    });
+    const apiKey = this.configService.get<string>('SENDGRID_API_KEY');
+    if (apiKey) {
+      sgMail.setApiKey(apiKey);
+    } else {
+      this.logger.warn('SENDGRID_API_KEY is not defined. Emails will fail to send.');
+    }
   }
 
   // Helper function to format currency properly with commas
-  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   private formatCurrency(value: number | any): string {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const num = typeof value === 'number' ? value : parseFloat(value);
     return num.toLocaleString('en-US', {
       minimumFractionDigits: 2,
@@ -50,6 +43,7 @@ export class MailService {
 
   async sendOrderConfirmation(to: string, data: OrderEmailData): Promise<void> {
     const from =
+      this.configService.get<string>('EMAIL_FROM') ||
       this.configService.get<string>('SMTP_FROM') ||
       'No Reply <noreply@ecommerce.com>';
 
@@ -136,32 +130,20 @@ export class MailService {
     `;
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const info = await this.transporter.sendMail({
+      await sgMail.send({
         from,
         to,
-        subject: `Confirmación de pedido ${data.orderNumber}`,
+        subject: \`Confirmación de pedido \${data.orderNumber}\`,
         html: htmlContent,
       });
 
       this.logger.log(
-        `Email de confirmación enviado a ${to} para la orden ${data.orderNumber}`,
+        \`Email de confirmación enviado a \${to} para la orden \${data.orderNumber}\`,
       );
-
-      // If using ethereal email, print the preview URL to console for easy clicking
-      if (this.configService.get<string>('SMTP_HOST')?.includes('ethereal')) {
-        this.logger.log(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          `URL de previsualización (Ethereal): ${nodemailer.getTestMessageUrl(info)}`,
-        );
-      }
     } catch (error) {
-      // We don't want to throw an error and crash the checkout if email fails
       this.logger.error(
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        `Error al enviar correo a ${to}: ${error.message}`,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        error.stack,
+        \`Error al enviar correo a \${to}: \${(error as any).message}\`,
+        (error as any).stack,
       );
     }
   }
@@ -171,6 +153,7 @@ export class MailService {
     data: { userName: string; resetLink: string; resetToken: string },
   ): Promise<void> {
     const from =
+      this.configService.get<string>('EMAIL_FROM') ||
       this.configService.get<string>('SMTP_FROM') ||
       'No Reply <noreply@ecommerce.com>';
 
@@ -198,61 +181,38 @@ export class MailService {
           </div>
 
           <!-- Botón de Acción -->
-          <div style="text-align: center; margin: 40px 0;">
-            <a href="${data.resetLink}" style="background-color: #f8ca24; color: #1a1a1a; padding: 14px 28px; text-decoration: none; font-weight: bold; font-size: 16px; border-radius: 4px; display: inline-block;">
-              Restablecer mi contraseña
-            </a>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${data.resetLink}" style="background-color: #1a1a1a; color: #ffffff; padding: 14px 28px; text-decoration: none; font-weight: bold; font-size: 16px; border-radius: 4px; display: inline-block;">Restablecer mi contraseña</a>
           </div>
 
-          <!-- Enlace alternativo (Fallback) -->
-          <div style="background-color: #f9f9f9; padding: 15px; border-radius: 6px; margin: 20px 0;">
-            <p style="margin: 0 0 10px 0; font-size: 14px; color: #555;">
-              Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:
-            </p>
-            <p style="margin: 0; font-size: 12px; word-break: break-all; color: #333; font-family: monospace; background-color: #eee; padding: 10px; border-radius: 4px;">
-              <a href="${data.resetLink}" style="color: #333; text-decoration: none;">${data.resetLink}</a>
-            </p>
-          </div>
+          <p style="font-size: 14px; color: #888; margin-top: 30px;">
+            Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:<br>
+            <a href="${data.resetLink}" style="color: #f8ca24; word-break: break-all;">${data.resetLink}</a>
+          </p>
 
           <!-- Footer -->
           <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #888; font-size: 12px; line-height: 1.5;">
-            <p style="margin: 0 0 10px 0;">
-              Si no solicitaste este cambio, contacta a nuestro equipo de soporte:<br>
-              <a href="mailto:soporte@eie.com" style="color: #f8ca24; text-decoration: none;">soporte@eie.com</a>
-            </p>
-            <p style="margin: 0;">
-              <a href="#" style="color: #888; text-decoration: underline;">Términos y Condiciones</a> | 
-              <a href="#" style="color: #888; text-decoration: underline;">Políticas de Privacidad</a>
-            </p>
+            <p style="margin: 0;">¿Necesitas ayuda? Escríbenos a <a href="mailto:soporte@eie.com" style="color: #f8ca24; text-decoration: none;">soporte@eie.com</a></p>
           </div>
         </div>
       </div>
     `;
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const info = await this.transporter.sendMail({
+      await sgMail.send({
         from,
         to,
-        subject: 'Restablecer tu contraseña — EIE',
+        subject: 'Restablecer contraseña - EIE Ecommerce',
         html: htmlContent,
       });
 
-      this.logger.log(`Email de recuperación de contraseña enviado a ${to}`);
-
-      if (this.configService.get<string>('SMTP_HOST')?.includes('ethereal')) {
-        this.logger.log(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          `URL de previsualización (Ethereal): ${nodemailer.getTestMessageUrl(info)}`,
-        );
-      }
+      this.logger.log(\`Email de reset de contraseña enviado a \${to}\`);
     } catch (error) {
       this.logger.error(
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        `Error al enviar correo de recuperación a ${to}: ${error.message}`,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        error.stack,
+        \`Error al enviar correo a \${to}: \${(error as any).message}\`,
+        (error as any).stack,
       );
+      throw error;
     }
   }
 
@@ -261,6 +221,7 @@ export class MailService {
     data: { userName: string; otpCode: string; verificationLink: string },
   ): Promise<void> {
     const from =
+      this.configService.get<string>('EMAIL_FROM') ||
       this.configService.get<string>('SMTP_FROM') ||
       'No Reply <noreply@ecommerce.com>';
 
@@ -273,57 +234,53 @@ export class MailService {
         </div>
         
         <div style="padding: 30px 20px; border: 1px solid #eee; border-top: none; border-radius: 0 0 8px 8px;">
-          <h1 style="color: #1a1a1a; font-size: 24px; margin-top: 0;">Verifica tu cuenta</h1>
+          <h1 style="color: #1a1a1a; font-size: 24px; margin-top: 0;">¡Bienvenido a EIE Ecommerce! 🎉</h1>
           <p style="font-size: 16px; line-height: 1.5;">Hola, <strong>${data.userName}</strong>:</p>
           <p style="font-size: 16px; line-height: 1.5; color: #555;">
-            Gracias por registrarte. Para terminar de crear tu cuenta y empezar a disfrutar de todas nuestras funcionalidades, por favor verifica tu correo.
+            Estamos muy felices de tenerte con nosotros. Para activar tu cuenta y empezar a disfrutar de la mejor experiencia de compra, necesitamos verificar tu correo electrónico.
           </p>
           
-          <div style="background-color: #f9f9f9; padding: 20px; border-radius: 6px; margin: 20px 0; text-align: center;">
-            <p style="margin: 0 0 10px 0; font-size: 14px; color: #555;">Tu código de verificación es:</p>
-            <p style="margin: 0; font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #1a1a1a;">
-              ${data.otpCode}
-            </p>
-          </div>
-
-          <!-- Información de Seguridad -->
-          <div style="background-color: #fff8e1; padding: 15px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #f8ca24;">
-            <p style="margin: 0; font-size: 14px;">
-              ⏱️ <strong>Este código y enlace expiran en 5 minutos</strong>.
-            </p>
-          </div>
-
-          <!-- Botón de Acción -->
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${data.verificationLink}" style="background-color: #f8ca24; color: #1a1a1a; padding: 14px 28px; text-decoration: none; font-weight: bold; font-size: 16px; border-radius: 4px; display: inline-block;">
-              Verificar cuenta automáticamente
-            </a>
+            <p style="font-size: 14px; color: #555; margin-bottom: 10px;">Tu código de seguridad (OTP) es:</p>
+            <div style="background-color: #f8ca24; color: #1a1a1a; font-size: 32px; font-weight: bold; letter-spacing: 5px; padding: 15px; border-radius: 6px; display: inline-block;">
+              ${data.otpCode}
+            </div>
           </div>
 
+          <div style="text-align: center; margin: 20px 0;">
+            <p style="font-size: 14px; color: #555; margin-bottom: 15px;">O puedes verificar directamente haciendo clic aquí:</p>
+            <a href="${data.verificationLink}" style="background-color: #1a1a1a; color: #ffffff; padding: 14px 28px; text-decoration: none; font-weight: bold; font-size: 16px; border-radius: 4px; display: inline-block;">Verificar mi cuenta</a>
+          </div>
+
+          <div style="background-color: #fff8e1; padding: 15px; border-radius: 6px; margin: 30px 0; border-left: 4px solid #f8ca24;">
+            <p style="margin: 0; font-size: 14px;">
+              ⏱️ <strong>Este código y enlace expiran en 5 minutos.</strong>
+            </p>
+          </div>
+
+          <!-- Footer -->
           <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #888; font-size: 12px; line-height: 1.5;">
-            <p style="margin: 0;">Si tú no creaste esta cuenta, ignora este correo.</p>
+            <p style="margin: 0;">¿No creaste esta cuenta? Puedes ignorar este correo de forma segura.</p>
           </div>
         </div>
       </div>
     `;
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars
-      const info = await this.transporter.sendMail({
+      await sgMail.send({
         from,
         to,
-        subject: 'Verifica tu cuenta — EIE',
+        subject: 'Verifica tu cuenta - EIE Ecommerce',
         html: htmlContent,
       });
 
-      this.logger.log(`Email de verificación enviado a ${to}`);
+      this.logger.log(\`Email de verificación enviado a \${to}\`);
     } catch (error) {
       this.logger.error(
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        `Error al enviar correo de verificación a ${to}: ${error.message}`,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        error.stack,
+        \`Error al enviar correo a \${to}: \${(error as any).message}\`,
+        (error as any).stack,
       );
+      throw error;
     }
   }
 }
