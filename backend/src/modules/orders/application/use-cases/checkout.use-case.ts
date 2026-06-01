@@ -59,7 +59,7 @@ export class CheckoutUseCase {
       orderNumber: order.orderNumber,
       customerName: dto.shippingName,
       items: order.items.map(i => ({
-        productName: i.productName || 'Producto',
+        productName: i.product?.name || 'Producto',
         quantity: i.quantity,
         unitPrice: i.unitPrice,
         lineTotal: i.lineTotal

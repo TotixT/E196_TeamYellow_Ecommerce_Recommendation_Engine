@@ -232,4 +232,71 @@ export class MailService {
       );
     }
   }
+
+  async sendVerificationEmail(
+    to: string,
+    data: { userName: string; otpCode: string; verificationLink: string },
+  ): Promise<void> {
+    const from =
+      this.configService.get<string>('SMTP_FROM') || 'No Reply <noreply@ecommerce.com>';
+
+    const htmlContent = `
+      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; background-color: #ffffff;">
+        
+        <!-- Header con Logo -->
+        <div style="background-color: #1a1a1a; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
+          <img src="https://res.cloudinary.com/ds7js53vz/image/upload/v1779898616/eie/logos/EIE_Imagen.jpg" alt="EIE Logo" style="max-height: 80px; width: auto; vertical-align: middle;">
+        </div>
+        
+        <div style="padding: 30px 20px; border: 1px solid #eee; border-top: none; border-radius: 0 0 8px 8px;">
+          <h1 style="color: #1a1a1a; font-size: 24px; margin-top: 0;">Verifica tu cuenta</h1>
+          <p style="font-size: 16px; line-height: 1.5;">Hola, <strong>${data.userName}</strong>:</p>
+          <p style="font-size: 16px; line-height: 1.5; color: #555;">
+            Gracias por registrarte. Para terminar de crear tu cuenta y empezar a disfrutar de todas nuestras funcionalidades, por favor verifica tu correo.
+          </p>
+          
+          <div style="background-color: #f9f9f9; padding: 20px; border-radius: 6px; margin: 20px 0; text-align: center;">
+            <p style="margin: 0 0 10px 0; font-size: 14px; color: #555;">Tu código de verificación es:</p>
+            <p style="margin: 0; font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #1a1a1a;">
+              ${data.otpCode}
+            </p>
+          </div>
+
+          <!-- Información de Seguridad -->
+          <div style="background-color: #fff8e1; padding: 15px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #f8ca24;">
+            <p style="margin: 0; font-size: 14px;">
+              ⏱️ <strong>Este código y enlace expiran en 5 minutos</strong>.
+            </p>
+          </div>
+
+          <!-- Botón de Acción -->
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${data.verificationLink}" style="background-color: #f8ca24; color: #1a1a1a; padding: 14px 28px; text-decoration: none; font-weight: bold; font-size: 16px; border-radius: 4px; display: inline-block;">
+              Verificar cuenta automáticamente
+            </a>
+          </div>
+
+          <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #888; font-size: 12px; line-height: 1.5;">
+            <p style="margin: 0;">Si tú no creaste esta cuenta, ignora este correo.</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    try {
+      const info = await this.transporter.sendMail({
+        from,
+        to,
+        subject: 'Verifica tu cuenta — EIE',
+        html: htmlContent,
+      });
+
+      this.logger.log(`Email de verificación enviado a ${to}`);
+    } catch (error) {
+      this.logger.error(
+        `Error al enviar correo de verificación a ${to}: ${error.message}`,
+        error.stack,
+      );
+    }
+  }
 }

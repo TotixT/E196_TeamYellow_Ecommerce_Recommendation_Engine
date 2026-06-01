@@ -8,8 +8,10 @@ export interface OrderItem {
   unitPrice: number;
   lineTotal: number;
   // Joined fields
-  productName?: string;
-  productImage?: string;
+  product?: {
+    name?: string;
+    mainImage?: string | null;
+  };
 }
 
 export interface Order {

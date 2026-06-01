@@ -33,6 +33,10 @@ export interface IOrdersRepository {
     page: number,
     limit: number,
   ): Promise<PaginatedOrders>;
+  findAllOrders(
+    page: number,
+    limit: number,
+  ): Promise<PaginatedOrders>;
 
   findById(orderId: string): Promise<OrderWithItems | null>;
 }

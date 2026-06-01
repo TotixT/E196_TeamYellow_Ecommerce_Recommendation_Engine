@@ -76,7 +76,10 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   @Roles('admin')
   @UseGuards(RolesGuard)
-  deactivateUser(@Param('id', ParseIntPipe) id: number) {
-    return this.toggleUserStatusUseCase.execute(id, 'deactivate');
+  deactivateUser(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() currentUser: any,
+  ) {
+    return this.toggleUserStatusUseCase.execute(id, 'deactivate', currentUser.id);
   }
 }

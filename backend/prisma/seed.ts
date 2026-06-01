@@ -22,6 +22,7 @@ async function main() {
       phone: '+573112664689',
       address: 'Zapamanga IV, Floridablanca',
       role: 'admin',
+      status: 'active',
     },
   });
   console.log('✅ Admin creado:', admin.email);
@@ -32,6 +33,7 @@ async function main() {
     passwordHash: userPasswordHash,
     fullName: `Cliente Prueba ${i + 1}`,
     role: 'user' as any,
+    status: 'active' as any,
   }));
 
   const createdUsers = [];
@@ -45,7 +47,7 @@ async function main() {
   }
   console.log(`✅ ${createdUsers.length} Usuarios creados`);
 
-  // 3. Crear 6 Categorías
+  // 3. Crear 12 Categorías
   const categoriesData = [
     {
       name: 'Smartphones',
@@ -73,6 +75,36 @@ async function main() {
       slug: 'accesorios',
       description: 'Cables, fundas y cargadores',
     },
+    {
+      name: 'Monitores',
+      slug: 'monitores',
+      description: 'Monitores para PC y Gaming',
+    },
+    {
+      name: 'Cámaras',
+      slug: 'camaras',
+      description: 'Cámaras fotográficas y de video',
+    },
+    {
+      name: 'Drones',
+      slug: 'drones',
+      description: 'Drones y accesorios de vuelo',
+    },
+    {
+      name: 'Hogar Inteligente',
+      slug: 'hogar-inteligente',
+      description: 'Dispositivos inteligentes para el hogar',
+    },
+    {
+      name: 'Componentes PC',
+      slug: 'componentes',
+      description: 'Tarjetas gráficas, procesadores y más',
+    },
+    {
+      name: 'Consolas',
+      slug: 'consolas',
+      description: 'Consolas de videojuegos',
+    },
   ];
 
   const createdCategories = [];
@@ -86,7 +118,7 @@ async function main() {
   }
   console.log(`✅ ${createdCategories.length} Categorías creadas`);
 
-  // 4. Crear 18 Productos (3 por categoría)
+  // 4. Crear Productos (varios por categoría)
   const productsData = [
     // Smartphones
     { catSlug: 'smartphones', name: 'iPhone 15 Pro', price: 999.99, stock: 50 },
@@ -102,6 +134,8 @@ async function main() {
       price: 899.99,
       stock: 20,
     },
+    { catSlug: 'smartphones', name: 'Xiaomi 14 Pro', price: 799.99, stock: 40 },
+    { catSlug: 'smartphones', name: 'OnePlus 12', price: 699.99, stock: 25 },
     // Laptops
     { catSlug: 'laptops', name: 'MacBook Air M3', price: 1099.0, stock: 20 },
     { catSlug: 'laptops', name: 'Dell XPS 15', price: 1500.0, stock: 15 },
@@ -111,6 +145,13 @@ async function main() {
       price: 1399.0,
       stock: 10,
     },
+    {
+      catSlug: 'laptops',
+      name: 'ASUS ROG Zephyrus G14',
+      price: 1699.0,
+      stock: 12,
+    },
+    { catSlug: 'laptops', name: 'HP Spectre x360', price: 1299.0, stock: 18 },
     // Audio
     { catSlug: 'audio', name: 'AirPods Pro 2', price: 249.0, stock: 100 },
     { catSlug: 'audio', name: 'Sony WH-1000XM5', price: 348.0, stock: 45 },
@@ -120,6 +161,13 @@ async function main() {
       price: 379.0,
       stock: 30,
     },
+    {
+      catSlug: 'audio',
+      name: 'Sennheiser Momentum 4',
+      price: 349.0,
+      stock: 25,
+    },
+    { catSlug: 'audio', name: 'JBL Flip 6', price: 129.0, stock: 80 },
     // Smartwatches
     {
       catSlug: 'smartwatches',
@@ -139,6 +187,12 @@ async function main() {
       price: 699.0,
       stock: 15,
     },
+    {
+      catSlug: 'smartwatches',
+      name: 'Fitbit Charge 6',
+      price: 159.0,
+      stock: 40,
+    },
     // Tablets
     { catSlug: 'tablets', name: 'iPad Pro M4', price: 999.0, stock: 25 },
     {
@@ -148,6 +202,7 @@ async function main() {
       stock: 20,
     },
     { catSlug: 'tablets', name: 'iPad Air M2', price: 599.0, stock: 35 },
+    { catSlug: 'tablets', name: 'Lenovo Tab P12 Pro', price: 499.0, stock: 15 },
     // Accesorios
     {
       catSlug: 'accesorios',
@@ -162,6 +217,80 @@ async function main() {
       stock: 150,
     },
     { catSlug: 'accesorios', name: 'Cable USB-C 2M', price: 14.99, stock: 300 },
+    { catSlug: 'accesorios', name: 'Soporte Laptop', price: 29.99, stock: 100 },
+    // Monitores
+    { catSlug: 'monitores', name: 'LG UltraGear 27', price: 349.0, stock: 20 },
+    {
+      catSlug: 'monitores',
+      name: 'Samsung Odyssey G7',
+      price: 599.0,
+      stock: 15,
+    },
+    {
+      catSlug: 'monitores',
+      name: 'Dell UltraSharp 32',
+      price: 799.0,
+      stock: 10,
+    },
+    // Cámaras
+    { catSlug: 'camaras', name: 'Sony Alpha a7 IV', price: 2499.0, stock: 8 },
+    { catSlug: 'camaras', name: 'Canon EOS R6', price: 2299.0, stock: 5 },
+    { catSlug: 'camaras', name: 'GoPro HERO12 Black', price: 399.0, stock: 30 },
+    // Drones
+    { catSlug: 'drones', name: 'DJI Mini 4 Pro', price: 759.0, stock: 15 },
+    { catSlug: 'drones', name: 'DJI Air 3', price: 1099.0, stock: 10 },
+    // Hogar Inteligente
+    {
+      catSlug: 'hogar-inteligente',
+      name: 'Amazon Echo Dot',
+      price: 49.99,
+      stock: 100,
+    },
+    {
+      catSlug: 'hogar-inteligente',
+      name: 'Google Nest Hub',
+      price: 99.99,
+      stock: 60,
+    },
+    {
+      catSlug: 'hogar-inteligente',
+      name: 'Philips Hue Starter Kit',
+      price: 129.99,
+      stock: 40,
+    },
+    // Componentes PC
+    {
+      catSlug: 'componentes',
+      name: 'NVIDIA RTX 4070',
+      price: 599.0,
+      stock: 12,
+    },
+    {
+      catSlug: 'componentes',
+      name: 'AMD Ryzen 7 7800X3D',
+      price: 399.0,
+      stock: 20,
+    },
+    {
+      catSlug: 'componentes',
+      name: 'Corsair Vengeance 32GB RAM',
+      price: 119.0,
+      stock: 50,
+    },
+    // Consolas
+    {
+      catSlug: 'consolas',
+      name: 'PlayStation 5 Slim',
+      price: 499.0,
+      stock: 30,
+    },
+    { catSlug: 'consolas', name: 'Xbox Series X', price: 499.0, stock: 25 },
+    {
+      catSlug: 'consolas',
+      name: 'Nintendo Switch OLED',
+      price: 349.0,
+      stock: 40,
+    },
   ];
 
   const createdProducts = [];

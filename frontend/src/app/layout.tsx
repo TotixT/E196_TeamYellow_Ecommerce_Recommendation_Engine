@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "E-commerce | Recommendation Engine",
-  description: "E-commerce platform with intelligent recommendation system",
+  title: "EIE | Ecommerce Intelligent Engine",
+  description: "Plataforma de e-commerce con sistema de recomendaciones inteligente impulsado por IA",
 };
 
 export default function RootLayout({
@@ -13,7 +14,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body>{children}</body>
+      <body>
+        <Providers>
+          {children}
+        </Providers>
+      </body>
     </html>
   );
 }

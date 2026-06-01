@@ -7,6 +7,7 @@ import { OrdersRepository } from './infrastructure/repositories/orders.repositor
 import { CheckoutUseCase } from './application/use-cases/checkout.use-case';
 import { ListUserOrdersUseCase } from './application/use-cases/list-user-orders.use-case';
 import { GetOrderDetailsUseCase } from './application/use-cases/get-order-details.use-case';
+import { GetAllOrdersUseCase } from './application/use-cases/get-all-orders.use-case';
 
 @Module({
   imports: [CartsModule, MailModule], // Needed for ICartsRepository and MailService
@@ -16,6 +17,7 @@ import { GetOrderDetailsUseCase } from './application/use-cases/get-order-detail
     CheckoutUseCase,
     ListUserOrdersUseCase,
     GetOrderDetailsUseCase,
+    GetAllOrdersUseCase,
     // Repository — bound to interface token for DI
     { provide: 'IOrdersRepository', useClass: OrdersRepository },
     OrdersRepository,

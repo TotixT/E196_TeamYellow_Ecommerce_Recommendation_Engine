@@ -33,7 +33,7 @@ export class ForgotPasswordUseCase {
     );
 
     // Send the reset email — uses FRONTEND_URL for the link button
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:5000';
+    const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
     const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`;
 
     await this.mailService.sendPasswordResetEmail(user.email, {

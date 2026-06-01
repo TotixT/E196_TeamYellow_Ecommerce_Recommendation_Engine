@@ -47,14 +47,23 @@ export class RecommendationsService {
     return this.recommendationsRepository.getSimilarProducts(product.categoryId, productId, 6);
   }
 
-  async getHomeRecommendations(userId?: number) {
+  async getHomeRecommendations(userId?: number, sessionId?: string) {
     if (userId) {
       const historyRecs = await this.getHistoryBasedRecommendations(userId);
       if (historyRecs.length > 0) {
-        return historyRecs; // Custom recommendations
+        return historyRecs; // Custom recommendations based on purchases
       }
     }
-    // Fallback: Popular products for anonymous or users without history
+
+    if (userId || sessionId) {
+      // Si no tiene historial de compras pero ha visto productos, usar la sesión o el ID del usuario
+      const sessionRecs = await this.getSessionBasedRecommendations(sessionId || '', userId);
+      if (sessionRecs.length > 0) {
+        return sessionRecs;
+      }
+    }
+
+    // Fallback: Popular products for anonymous or users without history/views
     return this.recommendationsRepository.getPopularProducts(8);
   }
 }

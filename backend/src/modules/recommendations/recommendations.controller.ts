@@ -34,13 +34,34 @@ export class RecommendationsController {
     return { success: true };
   }
 
+  // PUBLIC: POST /api/v1/recommendations/track-view
+  @Post('track-view')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtOptionalGuard)
+  trackView(
+    @Body('productId', ParseIntPipe) productId: number,
+    @Req() req: any,
+  ) {
+    const userId = req.user?.id;
+    const sessionId = req.headers['x-session-id'];
+
+    // Emite el evento de vista, que el listener guardará en la base de datos
+    this.eventEmitter.emit(
+      'product.viewed',
+      { productId, userId, sessionId }
+    );
+
+    return { success: true };
+  }
+
   // PUBLIC: GET /api/v1/recommendations/home
   @Get('home')
   @UseInterceptors(UserCacheInterceptor)
   @UseGuards(JwtOptionalGuard)
   getHomeRecommendations(@Req() req: any) {
     const userId = req.user?.id;
-    return this.recommendationsService.getHomeRecommendations(userId);
+    const sessionId = req.headers['x-session-id'];
+    return this.recommendationsService.getHomeRecommendations(userId, sessionId);
   }
 
   // AUTH REQUIRED: GET /api/v1/recommendations/history

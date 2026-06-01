@@ -61,6 +61,7 @@ export interface IProductsRepository {
   countImages(productId: number): Promise<number>;
   findFirstImage(productId: number): Promise<ProductImage | null>;
   setPrimaryImage(imageId: number, productId: number): Promise<void>;
+  updateImageUrl(imageId: number, newUrl: string): Promise<void>;
 
   // Category lookup (avoids cross-module dependency)
   findCategoryById(

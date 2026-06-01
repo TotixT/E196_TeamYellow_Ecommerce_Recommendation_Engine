@@ -19,6 +19,9 @@ import { ForgotPasswordDto } from '../../application/dtos/forgot-password.dto';
 import { ResetPasswordDto } from '../../application/dtos/reset-password.dto';
 import { JwtAuthGuard } from '../../../../common/guards/jwt-auth.guard';
 
+import { VerifyAccountUseCase } from '../../application/use-cases/verify-account.use-case';
+import { ResendVerificationUseCase } from '../../application/use-cases/resend-verification.use-case';
+
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -27,6 +30,8 @@ export class AuthController {
     private readonly logoutUseCase: LogoutUseCase,
     private readonly forgotPasswordUseCase: ForgotPasswordUseCase,
     private readonly resetPasswordUseCase: ResetPasswordUseCase,
+    private readonly verifyAccountUseCase: VerifyAccountUseCase,
+    private readonly resendVerificationUseCase: ResendVerificationUseCase,
   ) {}
 
   // EIE-001: POST /api/v1/auth/register
@@ -64,5 +69,19 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   resetPassword(@Body() dto: ResetPasswordDto) {
     return this.resetPasswordUseCase.execute(dto);
+  }
+
+  // POST /api/v1/auth/verify (public)
+  @Post('verify')
+  @HttpCode(HttpStatus.OK)
+  verify(@Body('codeOrToken') codeOrToken: string) {
+    return this.verifyAccountUseCase.execute(codeOrToken);
+  }
+
+  // POST /api/v1/auth/resend-verification (public)
+  @Post('resend-verification')
+  @HttpCode(HttpStatus.OK)
+  resendVerification(@Body('email') email: string) {
+    return this.resendVerificationUseCase.execute(email);
   }
 }

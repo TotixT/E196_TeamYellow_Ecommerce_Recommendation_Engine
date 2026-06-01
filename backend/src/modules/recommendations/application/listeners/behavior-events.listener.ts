@@ -49,10 +49,11 @@ export class BehaviorEventsListener {
         },
       });
 
-      // EIE-QA: Invalidate session cache immediately so the UI reflects the new view!
+      // EIE-QA: Invalidate session cache and home cache immediately so the UI reflects the new view!
       const userIdStr = payload.userId || 'anonymous';
       const sessionIdStr = payload.sessionId || 'no-session';
       await this.cacheManager.del(`/api/v1/recommendations/session-${userIdStr}-${sessionIdStr}`);
+      await this.cacheManager.del(`/api/v1/recommendations/home-${userIdStr}-${sessionIdStr}`);
       
     } catch (error) {
       this.logger.error(`Failed to track product.viewed: ${error.message}`);

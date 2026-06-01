@@ -70,4 +70,42 @@ export class AuthRepository implements IAuthRepository {
       data: { isActive: false },
     });
   }
+
+  async createVerificationToken(data: {
+    userId: number;
+    code: string;
+    token: string;
+    expiresAt: Date;
+  }): Promise<void> {
+    await this.prisma.verificationToken.create({ data });
+  }
+
+  async findVerificationToken(codeOrToken: string): Promise<{
+    userId: number;
+    code: string;
+    token: string;
+    expiresAt: Date;
+  } | null> {
+    return this.prisma.verificationToken.findFirst({
+      where: {
+        OR: [
+          { code: codeOrToken },
+          { token: codeOrToken }
+        ]
+      }
+    });
+  }
+
+  async activateUser(userId: number): Promise<void> {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { status: 'active' }
+    });
+  }
+
+  async deleteVerificationTokens(userId: number): Promise<void> {
+    await this.prisma.verificationToken.deleteMany({
+      where: { userId }
+    });
+  }
 }

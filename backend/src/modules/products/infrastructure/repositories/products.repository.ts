@@ -256,6 +256,13 @@ export class ProductsRepository implements IProductsRepository {
     ]);
   }
 
+  async updateImageUrl(imageId: number, newUrl: string): Promise<void> {
+    await this.prisma.productImage.update({
+      where: { id: imageId },
+      data: { imageUrl: newUrl },
+    });
+  }
+
   // --- Category lookup (avoids cross-module dependency) ---
 
   async findCategoryById(

@@ -49,6 +49,12 @@ export class CartsRepository implements ICartsRepository {
                 name: true,
                 mainImage: true,
                 stock: true,
+                status: true,
+                category: {
+                  select: {
+                    name: true,
+                  }
+                }
               },
             },
           },
@@ -59,17 +65,24 @@ export class CartsRepository implements ICartsRepository {
 
     if (!cart) return null;
 
-    const items: CartItem[] = cart.items.map((item) => ({
+    // Filter out items whose product is inactive
+    const activeItems = cart.items.filter(item => (item.product as any).status === 'active');
+
+    const items: CartItem[] = activeItems.map((item) => ({
       id: item.id,
       cartId: item.cartId,
       productId: item.productId,
       quantity: item.quantity,
       unitPrice: Number(item.unitPrice),
       addedAt: item.addedAt,
-      productName: item.product.name,
-      productImage: item.product.mainImage ?? undefined,
-      productStock: item.product.stock,
-    }));
+      product: {
+        id: item.productId,
+        name: item.product.name,
+        mainImage: item.product.mainImage ?? undefined,
+        stock: item.product.stock,
+        categoryName: (item.product as any).category?.name || 'Producto',
+      }
+    } as any));
 
     const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
     const totalPrice = items.reduce(

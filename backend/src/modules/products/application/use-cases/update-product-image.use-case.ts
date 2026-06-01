@@ -62,15 +62,11 @@ export class UpdateProductImageUseCase {
       );
     }
 
-    // Update the image record with the potentially new URL version (CDN cache busting)
-    // Actually we don't have updateImage in repository, but we can reuse the current logic 
-    // or just assume the URL is the same. Wait, Cloudinary URL might change version numbers.
-    // Let's manually do a Prisma update since we don't have an updateImage method in repo.
-    // But clean architecture says we should use repository. Let's update repo interface or
-    // simply return it since `imageUrl` might be structurally identical but with a different version tag.
-    // To be clean, let's just return the success message. If the URL needs updating, we'd need a repo method.
-    // Cloudinary uses `invalidate: true` so the original URL will reflect the new image shortly.
-    
+    // Update the image record in the database with the new URL 
+    // Cloudinary changes the version tag in the URL (e.g. v123456 -> v123457)
+    // This guarantees the frontend receives a new URL and busts its cache.
+    await this.productsRepository.updateImageUrl(imageId, uploadResult.url);
+
     return { 
       message: 'Imagen actualizada y sobrescrita exitosamente', 
       image: {

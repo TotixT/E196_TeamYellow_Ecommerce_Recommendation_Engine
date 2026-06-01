@@ -12,6 +12,8 @@ import { LoginUseCase } from './application/use-cases/login.use-case';
 import { LogoutUseCase } from './application/use-cases/logout.use-case';
 import { ForgotPasswordUseCase } from './application/use-cases/forgot-password.use-case';
 import { ResetPasswordUseCase } from './application/use-cases/reset-password.use-case';
+import { VerifyAccountUseCase } from './application/use-cases/verify-account.use-case';
+import { ResendVerificationUseCase } from './application/use-cases/resend-verification.use-case';
 import { PrismaModule } from '../../database/prisma.module';
 import { MailModule } from '../../common/shared/mail/mail.module';
 
@@ -39,6 +41,8 @@ import { MailModule } from '../../common/shared/mail/mail.module';
     LogoutUseCase,
     ForgotPasswordUseCase,
     ResetPasswordUseCase,
+    VerifyAccountUseCase,
+    ResendVerificationUseCase,
     // Strategy
     JwtStrategy,
     // Repository — bound to interface token for DI

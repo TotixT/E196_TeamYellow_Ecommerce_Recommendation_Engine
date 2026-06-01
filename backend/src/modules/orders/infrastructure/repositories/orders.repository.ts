@@ -27,7 +27,7 @@ export class OrdersRepository implements IOrdersRepository {
         where: { cartId },
         include: {
           product: {
-            select: { id: true, name: true, price: true, stock: true, mainImage: true },
+            select: { id: true, name: true, price: true, stock: true, mainImage: true, status: true },
           },
         },
       });
@@ -52,6 +52,13 @@ export class OrdersRepository implements IOrdersRepository {
         if (item.quantity > item.product.stock) {
           throw new BadRequestException(
             `El producto "${item.product.name}" ya no tiene stock suficiente. Unidades disponibles: ${item.product.stock}`,
+          );
+        }
+
+        // Check if product is still active
+        if (item.product.status !== 'active') {
+          throw new BadRequestException(
+            `El producto "${item.product.name}" ya no está disponible para la compra.`,
           );
         }
 
@@ -83,8 +90,8 @@ export class OrdersRepository implements IOrdersRepository {
       // 4. Generate order number: ORD-YYYYNNNNN
       const orderNumber = await this.generateOrderNumber(tx);
 
-      // 5. Shipping cost = 0 (free shipping for MVP)
-      const shippingCost = 0;
+      // 5. Shipping cost = 15 USD
+      const shippingCost = 15;
       const total = Math.round((subtotal + shippingCost) * 100) / 100;
 
       // 6. Create the order with items
@@ -145,12 +152,54 @@ export class OrdersRepository implements IOrdersRepository {
         orderBy: { createdAt: 'desc' },
         skip,
         take: limit,
+        include: {
+          items: {
+            include: {
+              product: {
+                select: { name: true, mainImage: true },
+              },
+            },
+          },
+        },
       }),
       this.prisma.order.count({ where: { userId } }),
     ]);
 
     return {
-      data: orders.map((o) => this.mapOrder(o)),
+      data: orders.map((o) => this.mapOrderWithItems(o)),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  async findAllOrders(
+    page: number,
+    limit: number,
+  ): Promise<PaginatedOrders> {
+    const skip = (page - 1) * limit;
+
+    const [orders, total] = await this.prisma.$transaction([
+      this.prisma.order.findMany({
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+        include: {
+          items: {
+            include: {
+              product: {
+                select: { name: true, mainImage: true },
+              },
+            },
+          },
+        },
+      }),
+      this.prisma.order.count(),
+    ]);
+
+    return {
+      data: orders.map((o) => this.mapOrderWithItems(o)),
       total,
       page,
       limit,
@@ -219,8 +268,10 @@ export class OrdersRepository implements IOrdersRepository {
         quantity: item.quantity,
         unitPrice: Number(item.unitPrice),
         lineTotal: Number(item.lineTotal),
-        productName: item.product?.name,
-        productImage: item.product?.mainImage ?? undefined,
+        product: {
+          name: item.product?.name,
+          mainImage: item.product?.mainImage ?? null,
+        },
       })),
     };
   }

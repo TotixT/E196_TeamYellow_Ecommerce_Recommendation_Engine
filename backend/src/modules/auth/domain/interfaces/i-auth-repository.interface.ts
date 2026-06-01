@@ -17,4 +17,18 @@ export interface IAuthRepository {
     token: string,
   ): Promise<{ id: string; isActive: boolean } | null>;
   invalidateSessionToken(token: string): Promise<void>;
+  createVerificationToken(data: {
+    userId: number;
+    code: string;
+    token: string;
+    expiresAt: Date;
+  }): Promise<void>;
+  findVerificationToken(codeOrToken: string): Promise<{
+    userId: number;
+    code: string;
+    token: string;
+    expiresAt: Date;
+  } | null>;
+  activateUser(userId: number): Promise<void>;
+  deleteVerificationTokens(userId: number): Promise<void>;
 }

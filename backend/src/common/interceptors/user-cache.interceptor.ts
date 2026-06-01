@@ -15,6 +15,9 @@ export class UserCacheInterceptor extends CacheInterceptor {
     const sessionId = request.headers['x-session-id'] || 'no-session';
     
     // Create a unique cache key per URL + User + Session
-    return `${request.url}-${userId}-${sessionId}`;
+    // We use originalUrl to ensure the global prefix (/api/v1) is included consistently
+    const key = `${request.originalUrl}-${userId}-${sessionId}`;
+    console.log(`[UserCacheInterceptor] Cache key generated: ${key}`);
+    return key;
   }
 }
