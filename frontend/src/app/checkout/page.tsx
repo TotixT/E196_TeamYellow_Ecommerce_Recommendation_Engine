@@ -28,7 +28,7 @@ export default function CheckoutPage() {
   const [createdOrder, setCreatedOrder] = useState<any>(null);
 
   // Form State
-  const [shipping, setShipping] = useState({ name: '', address: '', city: '', phone: '' });
+  const [shipping, setShipping] = useState({ name: '', address: '', city: '', phone: '', countryCode: '+57' });
   const [payment, setPayment] = useState({ number: '', name: '', expiry: '', cvv: '' });
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
@@ -82,7 +82,7 @@ export default function CheckoutPage() {
         shippingName: shipping.name,
         shippingAddress: shipping.address,
         shippingCity: shipping.city,
-        shippingPhone: shipping.phone
+        shippingPhone: `${shipping.countryCode} ${shipping.phone}`
       });
 
       setCreatedOrder(data);
@@ -174,7 +174,7 @@ export default function CheckoutPage() {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Dirección completa</label>
-                        <input type="text" placeholder="Ej: Calle 123 #45-67, Apto 801" value={shipping.address} onChange={e => setShipping({...shipping, address: e.target.value})} className={`w-full px-4 py-2.5 rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-primary border ${fieldErrors.address ? 'border-red-300' : 'border-transparent'}`} />
+                        <input type="text" maxLength={200} placeholder="Ej: Calle 123 #45-67, Apto 801" value={shipping.address} onChange={e => setShipping({...shipping, address: e.target.value})} className={`w-full px-4 py-2.5 rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-primary border ${fieldErrors.address ? 'border-red-300' : 'border-transparent'}`} />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -183,7 +183,25 @@ export default function CheckoutPage() {
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-                          <input type="tel" value={shipping.phone} onChange={e => setShipping({...shipping, phone: e.target.value})} className={`w-full px-4 py-2.5 rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-primary border ${fieldErrors.phone ? 'border-red-300' : 'border-transparent'}`} />
+                          <div className="flex gap-2">
+                            <select 
+                              value={shipping.countryCode} 
+                              onChange={e => setShipping({...shipping, countryCode: e.target.value})}
+                              className="px-2 py-2.5 rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-primary border border-transparent text-sm"
+                            >
+                              <option value="+57">🇨🇴 +57</option>
+                              <option value="+54">🇦🇷 +54</option>
+                              <option value="+52">🇲🇽 +52</option>
+                              <option value="+1">🇺🇸 +1</option>
+                            </select>
+                            <input 
+                              type="tel" 
+                              maxLength={15} 
+                              value={shipping.phone} 
+                              onChange={e => setShipping({...shipping, phone: e.target.value.replace(/\D/g, '')})} 
+                              className={`w-full px-4 py-2.5 rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-primary border ${fieldErrors.phone ? 'border-red-300' : 'border-transparent'}`} 
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -209,11 +227,34 @@ export default function CheckoutPage() {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">Expiración (MM/AA)</label>
-                          <input type="text" placeholder="12/28" maxLength={5} value={payment.expiry} onChange={e => setPayment({...payment, expiry: e.target.value})} className={`w-full px-4 py-2.5 rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-primary border ${fieldErrors.expiry ? 'border-red-300' : 'border-transparent'}`} />
+                          <input 
+                            type="text" 
+                            placeholder="12/28" 
+                            maxLength={5} 
+                            value={payment.expiry} 
+                            onChange={e => {
+                              let val = e.target.value.replace(/\D/g, '');
+                              if (val.length >= 2) {
+                                const month = parseInt(val.substring(0, 2), 10);
+                                if (month > 12) val = '12' + val.substring(2);
+                                else if (month === 0 && val.length === 2) val = '01' + val.substring(2);
+                              }
+                              if (val.length > 2) val = val.substring(0, 2) + '/' + val.substring(2, 4);
+                              setPayment({...payment, expiry: val});
+                            }} 
+                            className={`w-full px-4 py-2.5 rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-primary border ${fieldErrors.expiry ? 'border-red-300' : 'border-transparent'}`} 
+                          />
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">CVV</label>
-                          <input type="password" placeholder="123" maxLength={4} value={payment.cvv} onChange={e => setPayment({...payment, cvv: e.target.value})} className={`w-full px-4 py-2.5 rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-primary border ${fieldErrors.cvv ? 'border-red-300' : 'border-transparent'}`} />
+                          <input 
+                            type="password" 
+                            placeholder="123" 
+                            maxLength={4} 
+                            value={payment.cvv} 
+                            onChange={e => setPayment({...payment, cvv: e.target.value.replace(/\D/g, '')})} 
+                            className={`w-full px-4 py-2.5 rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-primary border ${fieldErrors.cvv ? 'border-red-300' : 'border-transparent'}`} 
+                          />
                         </div>
                       </div>
                     </div>

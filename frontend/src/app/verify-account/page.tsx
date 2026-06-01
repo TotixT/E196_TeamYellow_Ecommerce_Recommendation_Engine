@@ -53,21 +53,42 @@ function VerifyAccountContent() {
   }, [countdown]);
 
   const handleCodeChange = (index: number, value: string) => {
-    if (value.length > 1) return; // Only 1 digit per input
+    // Solo permitir un dígito o si el input se borra
+    const val = value.replace(/\D/g, '');
+    if (val.length > 1) return;
     
     const newCode = [...code];
-    newCode[index] = value;
+    newCode[index] = val;
     setCode(newCode);
 
     // Auto focus next input
-    if (value && index < 5) {
+    if (val && index < 5) {
       const nextInput = document.getElementById(`code-${index + 1}`);
       nextInput?.focus();
     }
 
     // Auto submit if all 6 digits are filled
-    if (index === 5 && value && newCode.every(c => c !== '')) {
+    if (index === 5 && val && newCode.every(c => c !== '')) {
       verifyCodeOrToken(newCode.join(''));
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    if (!pastedData) return;
+
+    const newCode = [...code];
+    for (let i = 0; i < pastedData.length; i++) {
+      newCode[i] = pastedData[i];
+    }
+    setCode(newCode);
+
+    if (pastedData.length === 6) {
+      verifyCodeOrToken(newCode.join(''));
+    } else {
+      const nextInput = document.getElementById(`code-${pastedData.length}`);
+      nextInput?.focus();
     }
   };
 
@@ -156,6 +177,7 @@ function VerifyAccountContent() {
               value={digit}
               onChange={(e) => handleCodeChange(idx, e.target.value)}
               onKeyDown={(e) => handleKeyDown(idx, e)}
+              onPaste={handlePaste}
               disabled={status === 'loading'}
               className="w-12 h-14 text-center text-2xl font-bold border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
               autoComplete="off"

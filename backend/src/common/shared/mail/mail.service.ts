@@ -68,7 +68,7 @@ export class MailService {
         
         <!-- Header con Logo -->
         <div style="background-color: #1a1a1a; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
-          <img src="https://res.cloudinary.com/ds7js53vz/image/upload/v1779898616/eie/logos/EIE_Imagen.jpg" alt="EIE Logo" style="max-height: 80px; width: auto; vertical-align: middle;">
+          <img src="https://res.cloudinary.com/ds7js53vz/image/upload/v1780277735/eie/cat-12/prod-43/img-2.jpg" alt="EIE Logo" style="max-height: 80px; width: auto; vertical-align: middle;">
         </div>
         
         <div style="padding: 30px 20px; border: 1px solid #eee; border-top: none; border-radius: 0 0 8px 8px;">
@@ -165,7 +165,7 @@ export class MailService {
         
         <!-- Header con Logo -->
         <div style="background-color: #1a1a1a; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
-          <img src="https://res.cloudinary.com/ds7js53vz/image/upload/v1779898616/eie/logos/EIE_Imagen.jpg" alt="EIE Logo" style="max-height: 80px; width: auto; vertical-align: middle;">
+          <img src="https://res.cloudinary.com/ds7js53vz/image/upload/v1780277735/eie/cat-12/prod-43/img-2.jpg" alt="EIE Logo" style="max-height: 80px; width: auto; vertical-align: middle;">
         </div>
         
         <div style="padding: 30px 20px; border: 1px solid #eee; border-top: none; border-radius: 0 0 8px 8px;">
@@ -234,7 +234,7 @@ export class MailService {
         
         <!-- Header con Logo -->
         <div style="background-color: #1a1a1a; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
-          <img src="https://res.cloudinary.com/ds7js53vz/image/upload/v1779898616/eie/logos/EIE_Imagen.jpg" alt="EIE Logo" style="max-height: 80px; width: auto; vertical-align: middle;">
+          <img src="https://res.cloudinary.com/ds7js53vz/image/upload/v1780277735/eie/cat-12/prod-43/img-2.jpg" alt="EIE Logo" style="max-height: 80px; width: auto; vertical-align: middle;">
         </div>
         
         <div style="padding: 30px 20px; border: 1px solid #eee; border-top: none; border-radius: 0 0 8px 8px;">

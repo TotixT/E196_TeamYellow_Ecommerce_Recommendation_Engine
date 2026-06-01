@@ -88,7 +88,7 @@ export default function RegisterPage() {
         <div className="relative z-10 max-w-md">
           <Link href="/" className="inline-flex bg-white/10 w-16 h-16 rounded-2xl items-center justify-center mb-8 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-colors shadow-lg overflow-hidden" title="Volver al inicio">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="https://res.cloudinary.com/ds7js53vz/image/upload/v1779898616/eie/logos/EIE_Imagen.jpg" alt="Logo" className="w-full h-full object-cover" />
+            <img src="https://res.cloudinary.com/ds7js53vz/image/upload/v1780277735/eie/cat-12/prod-43/img-2.jpg" alt="Logo" className="w-full h-full object-cover" />
           </Link>
           <h1 className="text-4xl font-bold mb-4 leading-tight">
             Únete a EIE
@@ -101,7 +101,7 @@ export default function RegisterPage() {
         {/* Background Decorative Logo */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-10 select-none pointer-events-none rounded-full overflow-hidden mix-blend-overlay">
            {/* eslint-disable-next-line @next/next/no-img-element */}
-           <img src="https://res.cloudinary.com/ds7js53vz/image/upload/v1779898616/eie/logos/EIE_Imagen.jpg" alt="" className="w-full h-full object-cover" />
+           <img src="https://res.cloudinary.com/ds7js53vz/image/upload/v1780277735/eie/cat-12/prod-43/img-2.jpg" alt="" className="w-full h-full object-cover" />
         </div>
         <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
       </div>
@@ -153,7 +153,7 @@ export default function RegisterPage() {
                 </button>
               </div>
               
-              {/* Strength Bar */}
+              {/* Strength Bar & Requirements */}
               {formData.password.length > 0 && (
                 <div className="mt-2">
                   <div className="flex gap-1 h-1 mb-1">
@@ -161,7 +161,22 @@ export default function RegisterPage() {
                       <div key={num} className={`flex-1 rounded-full ${score >= num ? strengthColors[score] : 'bg-gray-200'}`} />
                     ))}
                   </div>
-                  <p className={`text-[10px] ${strengthColors[score].replace('bg-', 'text-')}`}>{strengthLabels[score]}</p>
+                  <p className={`text-[10px] mb-2 font-medium ${strengthColors[score].replace('bg-', 'text-')}`}>{strengthLabels[score]}</p>
+                  
+                  <div className="space-y-1 mt-2">
+                    <p className={`text-xs flex items-center gap-1.5 transition-colors ${reqs.length ? 'text-green-600' : 'text-gray-400'}`}>
+                      <CheckCircle2 size={14} className={reqs.length ? 'text-green-500' : 'text-gray-300'} /> Mínimo 8 caracteres
+                    </p>
+                    <p className={`text-xs flex items-center gap-1.5 transition-colors ${reqs.upper ? 'text-green-600' : 'text-gray-400'}`}>
+                      <CheckCircle2 size={14} className={reqs.upper ? 'text-green-500' : 'text-gray-300'} /> Al menos una letra mayúscula
+                    </p>
+                    <p className={`text-xs flex items-center gap-1.5 transition-colors ${reqs.number ? 'text-green-600' : 'text-gray-400'}`}>
+                      <CheckCircle2 size={14} className={reqs.number ? 'text-green-500' : 'text-gray-300'} /> Al menos un número
+                    </p>
+                    <p className={`text-xs flex items-center gap-1.5 transition-colors ${reqs.special ? 'text-green-600' : 'text-gray-400'}`}>
+                      <CheckCircle2 size={14} className={reqs.special ? 'text-green-500' : 'text-gray-300'} /> Al menos un carácter especial
+                    </p>
+                  </div>
                 </div>
               )}
               {fieldErrors.password && <p className="mt-1 text-xs text-red-500">{fieldErrors.password}</p>}
