@@ -28,12 +28,14 @@ export class MailService {
     if (apiKey) {
       sgMail.setApiKey(apiKey);
     } else {
-      this.logger.warn('SENDGRID_API_KEY is not defined. Emails will fail to send.');
+      this.logger.warn(
+        'SENDGRID_API_KEY is not defined. Emails will fail to send.',
+      );
     }
   }
 
   // Helper function to format currency properly with commas
-  private formatCurrency(value: number | any): string {
+  private formatCurrency(value: number | string): string {
     const num = typeof value === 'number' ? value : parseFloat(value);
     return num.toLocaleString('en-US', {
       minimumFractionDigits: 2,
@@ -133,17 +135,18 @@ export class MailService {
       await sgMail.send({
         from,
         to,
-        subject: \`Confirmación de pedido \${data.orderNumber}\`,
+        subject: `Confirmación de pedido ${data.orderNumber}`,
         html: htmlContent,
       });
 
       this.logger.log(
-        \`Email de confirmación enviado a \${to} para la orden \${data.orderNumber}\`,
+        `Email de confirmación enviado a ${to} para la orden ${data.orderNumber}`,
       );
     } catch (error) {
+      const err = error as Error;
       this.logger.error(
-        \`Error al enviar correo a \${to}: \${(error as any).message}\`,
-        (error as any).stack,
+        `Error al enviar correo a ${to}: ${err.message}`,
+        err.stack,
       );
     }
   }
@@ -206,11 +209,12 @@ export class MailService {
         html: htmlContent,
       });
 
-      this.logger.log(\`Email de reset de contraseña enviado a \${to}\`);
+      this.logger.log(`Email de reset de contraseña enviado a ${to}`);
     } catch (error) {
+      const err = error as Error;
       this.logger.error(
-        \`Error al enviar correo a \${to}: \${(error as any).message}\`,
-        (error as any).stack,
+        `Error al enviar correo a ${to}: ${err.message}`,
+        err.stack,
       );
       throw error;
     }
@@ -274,11 +278,12 @@ export class MailService {
         html: htmlContent,
       });
 
-      this.logger.log(\`Email de verificación enviado a \${to}\`);
+      this.logger.log(`Email de verificación enviado a ${to}`);
     } catch (error) {
+      const err = error as Error;
       this.logger.error(
-        \`Error al enviar correo a \${to}: \${(error as any).message}\`,
-        (error as any).stack,
+        `Error al enviar correo a ${to}: ${err.message}`,
+        err.stack,
       );
       throw error;
     }
