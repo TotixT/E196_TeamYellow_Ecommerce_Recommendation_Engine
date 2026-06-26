@@ -1,0 +1,63 @@
+services:
+  # NGINX Load Balancer
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - ecommerce-prod-network
+
+  # Backend (NestJS API) - Horizontally Scaled
+  backend:
+    build:
+      context: ./backend
+      target: production
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/ecommerce_recommendation_engine_db?schema=public
+      - NODE_ENV=production
+      - PORT=3000
+      # ... other environment variables should be injected here or via .env file ...
+    deploy:
+      replicas: 3 # This runs 3 instances of the backend container for horizontal scaling
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - postgres
+    networks:
+      - ecommerce-prod-network
+
+  # Frontend (Next.js)
+  frontend:
+    build:
+      context: ./frontend
+      target: production
+    environment:
+      - NEXT_PUBLIC_API_URL=/api
+    deploy:
+      replicas: 1
+    networks:
+      - ecommerce-prod-network
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=ecommerce_recommendation_engine_db
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    networks:
+      - ecommerce-prod-network
+
+networks:
+  ecommerce-prod-network:
+    driver: bridge
+
+volumes:
+  postgres_prod_data:
